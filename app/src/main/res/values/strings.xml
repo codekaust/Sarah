@@ -5,4 +5,14 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="profile">Profile</string>
+    <string name="talk_sasah">Talk to sarah</string>
+    <string name="places">Your Places</string>
+    <string name="Your_Name">Your_name</string>
+    <string name="current_location">current_location</string>
+    <string name="location">location</string>
+    <string name="reminders">Reminders</string>
+    <string name="login_logout">login/logout</string>
+    <string name="date_time">date-time</string>
+
 </resources>
