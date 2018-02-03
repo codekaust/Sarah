@@ -1,5 +1,6 @@
 package com.triointeli.sarah;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -54,21 +55,24 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
+        Menu menu = navigationView.getMenu();
+        menu.add("Title1");
+        menu.add("Title2");
+        menu.getItem(2).getSubMenu().add("home");
         remainders = new ArrayList<>();
 
         mAdapter = new ReminderAdapter(remainders);
 
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL));
 
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         remainders.add(new Remainder("fine","yeah",true));
         remainders.add(new Remainder("wtf","fk u",false));
+
     }
 
     @Override
@@ -110,15 +114,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-            // Handle the camera action
-
+//            Intent intentProfile=new Intent(this,class);
+//            startActivity(intentProfile);
         } else if (id == R.id.nav_talk_sarah) {
-
+//            Intent intentSarah=new Intent(this,class);
+//            startActivity(intentSarah);
         } else if (id == R.id.nav_Places) {
+//            Intent intentPlaces=new Intent(this,class);
+//            startActivity(intentPlaces);
+        } else if (id == R.id.nav_login) {
+//            Intent intentLogin=new Intent(this,class);
+//            startActivity(intentLogin);
         }
-//        } else if (id == R.id.nav_manage) {
-//
-//        } else if (id == R.id.nav_share) {
+//        else if (id == R.id.nav_share) {
 //
 //        } else if (id == R.id.nav_send) {
 //
