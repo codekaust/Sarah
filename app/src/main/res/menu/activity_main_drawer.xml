@@ -5,34 +5,33 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_perm_identity_white_24dp"
+            android:title="@string/profile" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_talk_sarah"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:title="@string/talk_sasah" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
-    </group>
-
-    <item android:title="Communicate">
+            android:id="@+id/nav_Places"
+            android:icon="@drawable/ic_place_black_24dp"
+            android:title="@string/places" >
         <menu>
             <item
-                android:id="@+id/nav_share"
+                android:id="@+id/nav_share1"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_send2"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Send" />
         </menu>
-    </item>
+        </item>
+        <item
+            android:id="@+id/nav_login"
+            android:icon="@drawable/ic_place_black_24dp"
+            android:title="@string/login_logout" />
+    </group>
+
 
 </menu>
