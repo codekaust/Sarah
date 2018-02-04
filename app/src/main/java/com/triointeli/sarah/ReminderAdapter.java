@@ -1,6 +1,5 @@
 package com.triointeli.sarah;
 
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHolder> {
 
-    private ArrayList<Remainder> remainders;
+    private ArrayList<Reminder> reminders;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView remainder;
@@ -31,8 +30,8 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
         }
     }
 
-    public ReminderAdapter(ArrayList<Remainder> remainders) {
-        this.remainders = remainders;
+    public ReminderAdapter(ArrayList<Reminder> reminders) {
+        this.reminders = reminders;
     }
 
     @Override
@@ -44,18 +43,18 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Remainder remainder = remainders.get(position);
+        Reminder reminder = reminders.get(position);
 
-        holder.remainder.setText(remainder.getRemainder());
-        holder.dateTime.setText(remainder.getDateTime());
-        holder.mCheckbox.setChecked(remainder.isDone());
+        holder.remainder.setText(reminder.getRemainder());
+        holder.dateTime.setText(reminder.getDateTime());
+        holder.mCheckbox.setChecked(reminder.isDone());
 
 
     }
 
     @Override
     public int getItemCount() {
-        return remainders.size();
+        return reminders.size();
     }
 
 

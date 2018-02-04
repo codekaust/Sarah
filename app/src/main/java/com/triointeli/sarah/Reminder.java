@@ -4,15 +4,15 @@ package com.triointeli.sarah;
  * Created by ritik on 03-02-2018.
  */
 
-public class Remainder {
+public class Reminder {
     private String remainder;
     private String dateTime;
     private boolean done;
 
-    public Remainder(){
+    public Reminder(){
 
     }
-    public Remainder(String remainder, String dateTime, boolean done) {
+    public Reminder(String remainder, String dateTime, boolean done) {
         this.remainder = remainder;
         this.dateTime = dateTime;
         this.done = done;

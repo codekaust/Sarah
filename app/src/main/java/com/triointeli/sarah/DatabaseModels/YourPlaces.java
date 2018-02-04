@@ -8,10 +8,8 @@ import io.realm.RealmObject;
  * Created by ktubuntu on 4/2/18.
  */
 
-public class PlaceEvent extends RealmObject{
-
+public class YourPlaces extends RealmObject{
     String placeLAT,placeLNG;
-    int enterOrLeave;
 
     public String getPlaceLAT() {
         return placeLAT;
@@ -27,13 +25,5 @@ public class PlaceEvent extends RealmObject{
 
     public void setPlaceLNG(String placeLNG) {
         this.placeLNG = placeLNG;
-    }
-
-    public int getEnterOrLeave() {
-        return enterOrLeave;
-    }
-
-    public void setEnterOrLeave(int enterOrLeave) {
-        this.enterOrLeave = enterOrLeave;
     }
 }
