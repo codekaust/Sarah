@@ -8,9 +8,11 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +22,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -40,6 +44,9 @@ public class MainActivity extends AppCompatActivity
     public static RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
+    private EditText tmpToStoreAddLocnName;
+    private View mAddPlaceView;
+
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     private final static int PLACE_PICKER_REQUEST = 1;
 
@@ -53,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         requestPermission();
-        realm=Realm.getDefaultInstance();
+        realm = Realm.getDefaultInstance();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -93,8 +100,8 @@ public class MainActivity extends AppCompatActivity
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        reminders.add(new Reminder("fine","yeah",true));
-        reminders.add(new Reminder("wtf","fk u",false));
+        reminders.add(new Reminder("fine", "yeah", true));
+        reminders.add(new Reminder("wtf", "fk u", false));
 
     }
 
@@ -145,18 +152,38 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_login) {
 //            Intent intentLogin=new Intent(this,class);
 //            startActivity(intentLogin);
-        }
+        } else if (id == R.id.addPlace) {
+            mAddPlaceView = getLayoutInflater().inflate(R.layout.popup_add_your_place, null);
+            tmpToStoreAddLocnName = (EditText) mAddPlaceView.findViewById(R.id.placeName_addPlacePopupEditText);
 
-        else if(id==R.id.addPlace){
-            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-            try {
-                Intent intent = builder.build(MainActivity.this);
-                startActivityForResult(intent, PLACE_PICKER_REQUEST);
-            } catch (GooglePlayServicesRepairableException e) {
-                e.printStackTrace();
-            } catch (GooglePlayServicesNotAvailableException e) {
-                e.printStackTrace();
-            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setView(mAddPlaceView);
+            final AlertDialog dialogAddPlace = builder.create();
+            dialogAddPlace.setCustomTitle(getLayoutInflater().inflate(R.layout.add_place_popup_title, null));
+            dialogAddPlace.show();
+
+            ImageButton next = (ImageButton) mAddPlaceView.findViewById(R.id.nextImageButton);
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (TextUtils.isEmpty(tmpToStoreAddLocnName.getText().toString())) {
+                        Snackbar.make(mAddPlaceView, "Please specify name.", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    } else {
+                        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                        try {
+                            Intent intent = builder.build(MainActivity.this);
+                            startActivityForResult(intent, PLACE_PICKER_REQUEST);
+                        } catch (GooglePlayServicesRepairableException e) {
+                            e.printStackTrace();
+                        } catch (GooglePlayServicesNotAvailableException e) {
+                            e.printStackTrace();
+                        }
+                        dialogAddPlace.dismiss();
+                    }
+                }
+            });
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -168,11 +195,12 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PLACE_PICKER_REQUEST) {
-            if(resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK) {
 
                 Place place = PlacePicker.getPlace(MainActivity.this, data);
                 LatLng locationLatLng = place.getLatLng();
-                addYourPlace(locationLatLng);
+                addYourPlace(locationLatLng, tmpToStoreAddLocnName.getText().toString());
+                tmpToStoreAddLocnName.setText(null);
 
             }
         }
@@ -191,7 +219,7 @@ public class MainActivity extends AppCompatActivity
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case MY_PERMISSION_FINE_LOCATION:
-                if (grantResults[0] != PackageManager.PERMISSION_GRANTED){
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(getApplicationContext(), "This app requires location permissions to be granted", Toast.LENGTH_LONG).show();
                     finish();
                 }
@@ -199,17 +227,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void addYourPlace(final LatLng latLng){
+    public void addYourPlace(final LatLng latLng, final String name) {
 
-        final String LAT= Double.toString(latLng.latitude);
-        final String LNG= Double.toString(latLng.longitude);
+        final String LAT = Double.toString(latLng.latitude);
+        final String LNG = Double.toString(latLng.longitude);
 
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm bgRealm) {
-               YourPlaces place = bgRealm.createObject(YourPlaces.class);
-               place.setPlaceLAT(LAT);
-               place.setPlaceLNG(LNG);
+                YourPlaces place = bgRealm.createObject(YourPlaces.class);
+                place.setPlaceLAT(LAT);
+                place.setPlaceLNG(LNG);
+                place.setName(name);
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
