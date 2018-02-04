@@ -8,8 +8,10 @@ import io.realm.RealmObject;
  * Created by ktubuntu on 4/2/18.
  */
 
-public class YourPlaces extends RealmObject{
-    String placeLAT,placeLNG;
+public class YourPlaces extends RealmObject {
+    String placeLAT;
+    String placeLNG;
+    String name;
 
     public String getPlaceLAT() {
         return placeLAT;
@@ -25,5 +27,13 @@ public class YourPlaces extends RealmObject{
 
     public void setPlaceLNG(String placeLNG) {
         this.placeLNG = placeLNG;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
