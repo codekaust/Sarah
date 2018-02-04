@@ -4,10 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Sarah.iml" filepath="$PROJECT_DIR$/Sarah.iml" />
       <module fileurl="file://D:\cse work\android\Sarah\Sarah.iml" filepath="D:\cse work\android\Sarah\Sarah.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Sarah.iml" filepath="$PROJECT_DIR$/Sarah.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://D:\cse work\android\Sarah\app\app.iml" filepath="D:\cse work\android\Sarah\app\app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>
