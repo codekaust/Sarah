@@ -1,6 +1,7 @@
 package com.triointeli.sarah;
 
 import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -9,7 +10,7 @@ import io.realm.RealmConfiguration;
  * Created by ktubuntu on 4/2/18.
  */
 
-public class ApplicnSubcls_forRealm extends Application {
+public class ApplicnSubcls_forRealm extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
