@@ -68,6 +68,10 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private NotificationCompat.Builder builder;
 
+    private View addReminderPopup;
+    private View addReminderPopup2;
+    private View addReminderPopup3;
+
     NotificationManagerCompat notificationManager;
 
     Realm realm;
@@ -91,12 +95,19 @@ public class MainActivity extends AppCompatActivity
 
         buildGoogleApiClent();
 
+        addReminderPopup=getLayoutInflater().inflate(R.layout.add_reminder_popup,null);
+        addReminderPopup2=getLayoutInflater().inflate(R.layout.add_reminder_popup_2,null);
+        addReminderPopup3=getLayoutInflater().inflate(R.layout.add_reminder_popup_3,null);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setView(addReminderPopup);
+                final AlertDialog dialogAddPlace = builder.create();
+                dialogAddPlace.setCustomTitle(getLayoutInflater().inflate(R.layout.add_place_popup_title, null));
+                dialogAddPlace.show();
             }
         });
 
@@ -354,13 +365,15 @@ public class MainActivity extends AppCompatActivity
             if(dist[0]<500){
                 Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
 
+              //  NotificationCompat.Action action= new NotificationCompat.Action.Builder(R.drawable.logo_sarah,getString("open app",actionP));
+
                 builder.setSmallIcon(R.drawable.logo_sarah);
                 builder.setAutoCancel(true);
                 builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo_sarah));
                 builder.setContentTitle("from SARAH");
-                builder.setContentText(yourPlacesArrayList.get(i).getName());
-                builder.setSubText("You have enterred a marked location");
+                builder.setContentText("You have enterred a marked location");
                 builder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+//                builder.extend(new NotificationCompat.WearableExtender().addAction(action))
 
                 Toast.makeText(this, "test2", Toast.LENGTH_SHORT).show();
 
