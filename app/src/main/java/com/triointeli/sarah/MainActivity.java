@@ -2,6 +2,8 @@ package com.triointeli.sarah;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +12,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -62,10 +66,15 @@ public class MainActivity extends AppCompatActivity
 
     private LocationRequest mLocationRequest;
     private GoogleApiClient mGoogleApiClient;
+    private NotificationCompat.Builder builder;
+
+    NotificationManagerCompat notificationManager;
 
     Realm realm;
 
     ArrayList<Reminder> reminders;
+
+    private static final int NOTIFICATION_ID_1=1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +129,9 @@ public class MainActivity extends AppCompatActivity
 
         yourPlacesArrayList = new ArrayList<YourPlaces>();
         addCurrentlyStoredPlacesToArrayList();
+
+        builder=new NotificationCompat.Builder(this);
+        notificationManager = NotificationManagerCompat.from(getApplicationContext());
     }
 
     private void addCurrentlyStoredPlacesToArrayList() {
@@ -332,14 +344,28 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
-        float[] results = new float[1];
+        float[] dist = new float[1];
 
         for(int i=0;i<yourPlacesArrayList.size();i++){
 
             Location.distanceBetween(Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLAT()), Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLNG()),
-                    location.getLatitude(), location.getLongitude(), results);
+                    location.getLatitude(), location.getLongitude(), dist);
 
-            Toast.makeText(this, Float.toString(results[i]), Toast.LENGTH_SHORT).show();
+            if(dist[0]<500){
+                Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
+
+                builder.setSmallIcon(R.drawable.logo_sarah);
+                builder.setAutoCancel(true);
+                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo_sarah));
+                builder.setContentTitle("from SARAH");
+                builder.setContentText(yourPlacesArrayList.get(i).getName());
+                builder.setSubText("You have enterred a marked location");
+                builder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+
+                Toast.makeText(this, "test2", Toast.LENGTH_SHORT).show();
+
+                notificationManager.notify(NOTIFICATION_ID_1, builder.build());
+            }
         }
     }
 
