@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity
 
         reminders = new ArrayList<>();
 
-        mAdapter = new ReminderAdapter(reminders);
+        /*mAdapter = new ReminderAdapter(reminders);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         reminders.add(new Reminder("fine", "yeah", true));
-        reminders.add(new Reminder("wtf", "fk u", false));
+        reminders.add(new Reminder("wtf", "fk u", false));*/
 
     }
 

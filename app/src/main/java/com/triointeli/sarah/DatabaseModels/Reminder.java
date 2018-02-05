@@ -1,29 +1,32 @@
 package com.triointeli.sarah.DatabaseModels;
 
-/**
- * Created by ritik on 03-02-2018.
- */
+import io.realm.RealmObject;
 
-public class Reminder {
-    private String remainder;
+public class Reminder extends RealmObject {
+    private String reminderContent;
     private String dateTime;
     private boolean done;
+    private String placeOnEnter;
+    private String placeOnLeave;
 
     public Reminder(){
 
     }
-    public Reminder(String remainder, String dateTime, boolean done) {
-        this.remainder = remainder;
+
+    public Reminder(String reminderContent, String dateTime, boolean done, String placeOnEnter, String placeOnLeave) {
+        this.reminderContent = reminderContent;
         this.dateTime = dateTime;
         this.done = done;
+        this.placeOnEnter = placeOnEnter;
+        this.placeOnLeave = placeOnLeave;
     }
 
-    public String getRemainder() {
-        return remainder;
+    public String getReminderContent() {
+        return reminderContent;
     }
 
-    public void setRemainder(String remainder) {
-        this.remainder = remainder;
+    public void setReminderContent(String reminderContent) {
+        this.reminderContent = reminderContent;
     }
 
     public String getDateTime() {
@@ -40,5 +43,21 @@ public class Reminder {
 
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public String getPlaceOnEnter() {
+        return placeOnEnter;
+    }
+
+    public void setPlaceOnEnter(String placeOnEnter) {
+        this.placeOnEnter = placeOnEnter;
+    }
+
+    public String getPlaceOnLeave() {
+        return placeOnLeave;
+    }
+
+    public void setPlaceOnLeave(String placeOnLeave) {
+        this.placeOnLeave = placeOnLeave;
     }
 }
