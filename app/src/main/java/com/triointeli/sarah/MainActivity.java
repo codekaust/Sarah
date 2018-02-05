@@ -30,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView.LayoutManager mLayoutManager;
 
     private EditText tmpToStoreAddLocnName;
+    private String tmpEditTextLocation;
     private View mAddPlaceView;
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
@@ -71,6 +73,10 @@ public class MainActivity extends AppCompatActivity
     private View addReminderPopup;
     private View addReminderPopup2;
     private View addReminderPopup3;
+    Menu menu_ourPlcaes;
+    int subMenuCount;
+    TextView currentLocation;
+    private int indexSubmenu;
 
     NotificationManagerCompat notificationManager;
 
@@ -78,26 +84,39 @@ public class MainActivity extends AppCompatActivity
 
     ArrayList<Reminder> reminders;
 
-    private static final int NOTIFICATION_ID_1=1;
+    private static final int NOTIFICATION_ID_1 = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        indexSubmenu = 0;
+
         requestPermission();
         realm = Realm.getDefaultInstance();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        currentLocation = (TextView) findViewById(R.id.current_place);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         buildGoogleApiClent();
 
-        addReminderPopup=getLayoutInflater().inflate(R.layout.add_reminder_popup,null);
-        addReminderPopup2=getLayoutInflater().inflate(R.layout.add_reminder_popup_2,null);
-        addReminderPopup3=getLayoutInflater().inflate(R.layout.add_reminder_popup_3,null);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        Menu menu = navigationView.getMenu();
+        menu.add("Title1");
+        menu.add("Title2");
+        //menu.getItem(2).getSubMenu().add("home");*/
+        menu_ourPlcaes = menu.getItem(3).getSubMenu();
+        subMenuCount = menu_ourPlcaes.size();
+        reminders = new ArrayList<>();
+
+        addReminderPopup = getLayoutInflater().inflate(R.layout.add_reminder_popup, null);
+        addReminderPopup2 = getLayoutInflater().inflate(R.layout.add_reminder_popup_2, null);
+        addReminderPopup3 = getLayoutInflater().inflate(R.layout.add_reminder_popup_3, null);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +126,7 @@ public class MainActivity extends AppCompatActivity
                 builder.setView(addReminderPopup);
                 final AlertDialog dialogAddPlace = builder.create();
                 dialogAddPlace.setCustomTitle(getLayoutInflater().inflate(R.layout.add_place_popup_title, null));
-                dialogAddPlace.show();
+//                dialogAddPlace.show();
             }
         });
 
@@ -116,15 +135,6 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        Menu menu = navigationView.getMenu();
-        menu.add("Title1");
-        menu.add("Title2");
-        //menu.getItem(2).getSubMenu().add("home");*/
-
-        reminders = new ArrayList<>();
 
         /*mAdapter = new ReminderAdapter(reminders);
 
@@ -141,11 +151,14 @@ public class MainActivity extends AppCompatActivity
         yourPlacesArrayList = new ArrayList<YourPlaces>();
         addCurrentlyStoredPlacesToArrayList();
 
-        builder=new NotificationCompat.Builder(this);
+        builder = new NotificationCompat.Builder(this);
         notificationManager = NotificationManagerCompat.from(getApplicationContext());
     }
 
     private void addCurrentlyStoredPlacesToArrayList() {
+
+        menu_ourPlcaes.clear();
+        indexSubmenu=0;
 
         RealmResults<YourPlaces> places = realm.where(YourPlaces.class).findAll();
 
@@ -154,6 +167,7 @@ public class MainActivity extends AppCompatActivity
 
         for (YourPlaces place : places) {
             yourPlacesArrayList.add(place);
+            displaySubmenu(place);
         }
 
         realm.commitTransaction();
@@ -234,6 +248,8 @@ public class MainActivity extends AppCompatActivity
                         Snackbar.make(mAddPlaceView, "Please specify name.", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                     } else {
+                        tmpEditTextLocation = tmpToStoreAddLocnName.getText().toString();
+
                         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                         try {
                             Intent intent = builder.build(MainActivity.this);
@@ -263,7 +279,7 @@ public class MainActivity extends AppCompatActivity
 
                 Place place = PlacePicker.getPlace(MainActivity.this, data);
                 LatLng locationLatLng = place.getLatLng();
-                addYourPlace(locationLatLng, tmpToStoreAddLocnName.getText().toString());
+                addYourPlace(locationLatLng, tmpEditTextLocation);
                 tmpToStoreAddLocnName.setText(null);
 
             }
@@ -312,12 +328,13 @@ public class MainActivity extends AppCompatActivity
             public void onSuccess() {
                 // Transaction was a success.
                 Toast.makeText(MainActivity.this, "Successfully Stored", Toast.LENGTH_SHORT).show();
+                addCurrentlyStoredPlacesToArrayList();
             }
         }, new Realm.Transaction.OnError() {
             @Override
             public void onError(Throwable error) {
                 // Transaction failed and was automatically canceled.
-                Toast.makeText(MainActivity.this, "Coudnt Add\nPlease try again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -357,22 +374,22 @@ public class MainActivity extends AppCompatActivity
 
         float[] dist = new float[1];
 
-        for(int i=0;i<yourPlacesArrayList.size();i++){
+        for (int i = 0; i < yourPlacesArrayList.size(); i++) {
 
             Location.distanceBetween(Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLAT()), Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLNG()),
                     location.getLatitude(), location.getLongitude(), dist);
 
-            if(dist[0]<500){
+            if (dist[0] < 500) {
                 Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
 
-              //  NotificationCompat.Action action= new NotificationCompat.Action.Builder(R.drawable.logo_sarah,getString("open app",actionP));
+                //  NotificationCompat.Action action= new NotificationCompat.Action.Builder(R.drawable.logo_ sarah,getString("open app",actionP));
 
                 builder.setSmallIcon(R.drawable.logo_sarah);
                 builder.setAutoCancel(true);
                 builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo_sarah));
                 builder.setContentTitle("from SARAH");
                 builder.setContentText("You have enterred a marked location");
-                builder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+                builder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
 //                builder.extend(new NotificationCompat.WearableExtender().addAction(action))
 
                 Toast.makeText(this, "test2", Toast.LENGTH_SHORT).show();
@@ -402,5 +419,36 @@ public class MainActivity extends AppCompatActivity
 
         super.onStop();
     }
+
+    private void displaySubmenu(final YourPlaces place) {
+        menu_ourPlcaes.add(0, indexSubmenu, Menu.NONE, place.getName()).setIcon(R.drawable.ic_room_black_24dp).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                currentLocation.setText(place.getName());
+                reminders.clear();
+//                mAdapter.notifyDataSetChanged();
+                return false;
+            }
+        });
+
+        indexSubmenu++;
+
+    }
+//    private void displaySubmenu() {
+////        Log.i(objects.get(0).getName(),"point ma252");
+//        menu_ourPlcaes.add(0, indexSubmenu, Menu.NONE, yourPlacesArrayList.get(indexSubmenu).getName()).setIcon(R.drawable.ic_room_black_24dp).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                currentLocation.setText(yourPlacesArrayList.get(item.getItemId()).getName());
+//                reminders.clear();
+////                reminders.add(new Reminder(objects.get(item.getItemId()).getReminders().get(0), objects.get(item.getItemId()).getTime(),objects.get(item.getItemId()).getChecked().get(0)));
+//                mAdapter.notifyDataSetChanged();
+//                return false;
+//            }
+//        });
+//        indexSubmenu++;
+//
+//    }
+
 }
 
