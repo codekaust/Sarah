@@ -14,5 +14,8 @@
     <string name="reminders">Reminders</string>
     <string name="login_logout">login/logout</string>
     <string name="date_time">date-time</string>
-
+    <string name="place_in">Place in</string>
+    <string name="place_out">Place out</string>
+    <string name="sample_place_in">Rajendra bhawan</string>
+    <string name="sample_place_out">LHC</string>
 </resources>
