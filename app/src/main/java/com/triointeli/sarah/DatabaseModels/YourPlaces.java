@@ -10,6 +10,15 @@ public class YourPlaces extends RealmObject {
 
     String placeLAT,placeLNG,name;
 
+    public YourPlaces() {
+    }
+
+    public YourPlaces(String placeLAT, String placeLNG, String name) {
+        this.placeLAT = placeLAT;
+        this.placeLNG = placeLNG;
+        this.name = name;
+    }
+
     public String getPlaceLAT() {
         return placeLAT;
     }
