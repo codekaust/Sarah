@@ -31,6 +31,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
+import com.triointeli.sarah.DatabaseModels.Reminder;
 import com.triointeli.sarah.DatabaseModels.YourPlaces;
 
 import java.util.ArrayList;
@@ -144,14 +145,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-//            Intent intentProfile=new Intent(this,class);
-//            startActivity(intentProfile);
+            //Intent intentProfile=new Intent(this,class);
+            //startActivity(intentProfile);
         } else if (id == R.id.nav_talk_sarah) {
-//            Intent intentSarah=new Intent(this,class);
-//            startActivity(intentSarah);
+            //Intent intentSarah=new Intent(this,class);
+            //startActivity(intentSarah);
         } else if (id == R.id.nav_login) {
-//            Intent intentLogin=new Intent(this,class);
-//            startActivity(intentLogin);
+            //Intent intentLogin=new Intent(this,class);
+            //startActivity(intentLogin);
         } else if (id == R.id.addPlace) {
             mAddPlaceView = getLayoutInflater().inflate(R.layout.popup_add_your_place, null);
             tmpToStoreAddLocnName = (EditText) mAddPlaceView.findViewById(R.id.placeName_addPlacePopupEditText);

@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.triointeli.sarah.DatabaseModels.Reminder;
+
 import java.util.ArrayList;
 
 /**

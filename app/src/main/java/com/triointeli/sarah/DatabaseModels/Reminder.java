@@ -1,4 +1,4 @@
-package com.triointeli.sarah;
+package com.triointeli.sarah.DatabaseModels;
 
 /**
  * Created by ritik on 03-02-2018.
