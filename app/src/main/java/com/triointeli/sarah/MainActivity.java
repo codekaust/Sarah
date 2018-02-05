@@ -2,9 +2,11 @@ package com.triointeli.sarah;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -26,19 +28,25 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
+import com.triointeli.sarah.DatabaseModels.Reminder;
 import com.triointeli.sarah.DatabaseModels.YourPlaces;
 
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private RecyclerView mRecyclerView;
     public static RecyclerView.Adapter mAdapter;
@@ -49,6 +57,11 @@ public class MainActivity extends AppCompatActivity
 
     private final static int MY_PERMISSION_FINE_LOCATION = 101;
     private final static int PLACE_PICKER_REQUEST = 1;
+
+    private ArrayList<YourPlaces> yourPlacesArrayList;
+
+    private LocationRequest mLocationRequest;
+    private GoogleApiClient mGoogleApiClient;
 
     Realm realm;
 
@@ -66,6 +79,8 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        buildGoogleApiClent();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +106,7 @@ public class MainActivity extends AppCompatActivity
 
         reminders = new ArrayList<>();
 
-        mAdapter = new ReminderAdapter(reminders);
+        /*mAdapter = new ReminderAdapter(reminders);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -101,8 +116,34 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         reminders.add(new Reminder("fine", "yeah", true));
-        reminders.add(new Reminder("wtf", "fk u", false));
+        reminders.add(new Reminder("wtf", "fk u", false));*/
 
+        yourPlacesArrayList = new ArrayList<YourPlaces>();
+        addCurrentlyStoredPlacesToArrayList();
+    }
+
+    private void addCurrentlyStoredPlacesToArrayList() {
+
+        RealmResults<YourPlaces> places = realm.where(YourPlaces.class).findAll();
+
+        // Use an iterator to add all
+        realm.beginTransaction();
+
+        for (YourPlaces place : places) {
+            yourPlacesArrayList.add(place);
+        }
+
+        realm.commitTransaction();
+    }
+
+
+    protected synchronized void buildGoogleApiClent() {
+        //this object helps us to connect with Google Api Services
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
     }
 
     @Override
@@ -144,14 +185,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_profile) {
-//            Intent intentProfile=new Intent(this,class);
-//            startActivity(intentProfile);
+            //Intent intentProfile=new Intent(this,class);
+            //startActivity(intentProfile);
         } else if (id == R.id.nav_talk_sarah) {
-//            Intent intentSarah=new Intent(this,class);
-//            startActivity(intentSarah);
+            //Intent intentSarah=new Intent(this,class);
+            //startActivity(intentSarah);
         } else if (id == R.id.nav_login) {
-//            Intent intentLogin=new Intent(this,class);
-//            startActivity(intentLogin);
+            //Intent intentLogin=new Intent(this,class);
+            //startActivity(intentLogin);
         } else if (id == R.id.addPlace) {
             mAddPlaceView = getLayoutInflater().inflate(R.layout.popup_add_your_place, null);
             tmpToStoreAddLocnName = (EditText) mAddPlaceView.findViewById(R.id.placeName_addPlacePopupEditText);
@@ -239,6 +280,9 @@ public class MainActivity extends AppCompatActivity
                 place.setPlaceLAT(LAT);
                 place.setPlaceLNG(LNG);
                 place.setName(name);
+
+                //add new place to database
+                yourPlacesArrayList.add(place);
             }
         }, new Realm.Transaction.OnSuccess() {
             @Override
@@ -250,9 +294,74 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onError(Throwable error) {
                 // Transaction failed and was automatically canceled.
-                Toast.makeText(MainActivity.this, "Coudnt Store\nPlease try again", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Coudnt Add\nPlease try again", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    //this method is triggered as the connection is established(See onStart())
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //    ActivityCompat #requestPermissions
+            ActivityCompat.requestPermissions(this, new String[]{
+                    android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(10000);
+
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+        mGoogleApiClient.connect();
+
+    }
+
+    //this method is triggered every time t=loacation is changes either by our own app or by the system
+    @Override
+    public void onLocationChanged(Location location) {
+
+        float[] results = new float[1];
+
+        for(int i=0;i<yourPlacesArrayList.size();i++){
+
+            Location.distanceBetween(Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLAT()), Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLNG()),
+                    location.getLatitude(), location.getLongitude(), results);
+
+            Toast.makeText(this, Float.toString(results[i]), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+
+        super.onStop();
     }
 }
 

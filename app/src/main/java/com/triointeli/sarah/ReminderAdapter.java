@@ -1,3 +1,19 @@
+import android.support.v7.widget.RecyclerView;
+
+/*import com.triointeli.sarah.DatabaseModels.Reminder;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.TextView;
+
+import com.triointeli.sarah.DatabaseModels.Reminder;
+import com.triointeli.sarah.R;
+
+import java.util.ArrayList;
+
+import com.triointeli.sarah.DatabaseModels.Reminder;
 package com.triointeli.sarah;
 
 import android.support.v7.widget.RecyclerView;
@@ -7,11 +23,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.triointeli.sarah.DatabaseModels.Reminder;
+import com.triointeli.sarah.R;
+
 import java.util.ArrayList;
 
-/**
- * Created by ritik on 03-02-2018.
- */
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHolder> {
 
@@ -59,3 +75,4 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
 
 
 }
+*/

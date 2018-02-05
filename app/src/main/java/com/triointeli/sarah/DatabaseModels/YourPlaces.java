@@ -1,17 +1,23 @@
 package com.triointeli.sarah.DatabaseModels;
 
-import com.google.android.gms.maps.model.LatLng;
-
 import io.realm.RealmObject;
 
 /**
- * Created by ktubuntu on 4/2/18.
+ * Created by ktubuntu on 5/2/18.
  */
 
 public class YourPlaces extends RealmObject {
-    String placeLAT;
-    String placeLNG;
-    String name;
+
+    String placeLAT,placeLNG,name;
+
+    public YourPlaces() {
+    }
+
+    public YourPlaces(String placeLAT, String placeLNG, String name) {
+        this.placeLAT = placeLAT;
+        this.placeLNG = placeLNG;
+        this.name = name;
+    }
 
     public String getPlaceLAT() {
         return placeLAT;
