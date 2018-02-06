@@ -93,14 +93,10 @@ public class MainActivity extends AppCompatActivity
     private int indexSubmenu;
     NotificationManagerCompat notificationManager;
 
-    AlertDialog dialogAddPlace, dialogAddPlace2, dialogAddPlace1;
-
-    private boolean datePickerShow = false;
-    private boolean timePickerShow = false;
     Realm realm;
     public static ArrayList<Reminder> reminders;
     private static final int NOTIFICATION_ID_1 = 1;
-
+    public static int counterYouPlaces =0;
     private static Location prevLocn = null, newLocn = null;
 
     @Override
@@ -207,17 +203,17 @@ public class MainActivity extends AppCompatActivity
 //        return null;
 //    }
 
-    private DatePickerDialog.OnDateSetListener myDateListener = new
-            DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker arg0,
-                                      int arg1, int arg2, int arg3) {
-                    // arg1 = year
-                    // arg2 = month
-                    // arg3 = day
-//                    showDate(arg1, arg2+1, arg3);
-                }
-            };
+//    private DatePickerDialog.OnDateSetListener myDateListener = new
+//            DatePickerDialog.OnDateSetListener() {
+//                @Override
+//                public void onDateSet(DatePicker arg0,
+//                                      int arg1, int arg2, int arg3) {
+//                    // arg1 = year
+//                    // arg2 = month
+//                    // arg3 = day
+////                    showDate(arg1, arg2+1, arg3);
+//                }
+//            };
 
     private void addCurrentlyStoredPlacesToArrayList() {
 
@@ -232,6 +228,7 @@ public class MainActivity extends AppCompatActivity
         for (YourPlaces place : places) {
             yourPlacesArrayList.add(place);
             displaySubmenu(place);
+            counterYouPlaces++;
         }
 
         realm.commitTransaction();
@@ -397,11 +394,12 @@ public class MainActivity extends AppCompatActivity
                 addCurrentlyStoredPlacesToArrayList();
 
                 //start geo fence addition process
-                Geofence geofence = createGeofence(latLng, GEOFENCE_RADIUS,name);
+                Geofence geofence = createGeofence(latLng, GEOFENCE_RADIUS, name);
                 GeofencingRequest geofenceRequest = createGeofenceRequest(geofence);
                 addGeofence(geofenceRequest);
-                Toast.makeText(MainActivity.this, "bkhg"+geofence.getRequestId().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "bkhg" + geofence.getRequestId().toString(), Toast.LENGTH_SHORT).show();
 
+                counterYouPlaces++;
                 // Transaction was a success.
                 Toast.makeText(MainActivity.this, "Successfully Stored", Toast.LENGTH_SHORT).show();
             }
@@ -416,13 +414,13 @@ public class MainActivity extends AppCompatActivity
 
 
     // Create a Geofence
-    private Geofence createGeofence(LatLng latLng, float radius ,String idName) {
+    private Geofence createGeofence(LatLng latLng, float radius, String idName) {
         return new Geofence.Builder()
                 .setRequestId(idName)
                 .setCircularRegion(latLng.latitude, latLng.longitude, radius)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
-                        | Geofence.GEOFENCE_TRANSITION_EXIT )
+                        | Geofence.GEOFENCE_TRANSITION_EXIT)
                 .setLoiteringDelay(5).build();
     }
 
@@ -560,8 +558,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static Intent makeNotificationIntent(Context context, String msg) {
-        Intent intent = new Intent( context, MainActivity.class );
-        intent.putExtra( "Hello this is sarah", msg );
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra("Hello this is sarah", msg);
         return intent;
     }
 

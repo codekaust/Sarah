@@ -27,17 +27,16 @@
             android:hint="placeOnLeave" />
 
         <Spinner
-            android:id="@+id/s1"
+            android:id="@+id/spinnerEntry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textColor="@color/white" />
 
         <Spinner
-            android:id="@+id/s"
+            android:id="@+id/spinnerExit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:textColor="@color/white" />
 
         <ImageButton
@@ -112,26 +111,40 @@
             android:id="@+id/next1st_ImageBtn_AddReminder_popup2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:padding="10dp"
             android:src="@drawable/ic_menu_send" />
 
-        <TimePicker
-            android:id="@+id/alarmTimePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:visibility="gone" />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <DatePicker
-            android:id="@+id/alarmDatePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:visibility="visible" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <TimePicker
+                    android:id="@+id/alarmTimePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:visibility="gone" />
 
+                <DatePicker
+                    android:id="@+id/alarmDatePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:visibility="visible" />
+                <Button
+                    android:id="@+id/showDateTimeButton"
+                    android:text="save selection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/remainderLayout"
         android:layout_width="match_parent"
