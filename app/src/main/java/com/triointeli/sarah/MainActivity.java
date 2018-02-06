@@ -1,5 +1,7 @@
 package com.triointeli.sarah;
 
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -19,6 +21,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -37,6 +40,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
@@ -52,6 +59,8 @@ import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+
+    private static final int GEOFENCE_RADIUS = 200; //in meter
 
     private RecyclerView mRecyclerView;
     public static RecyclerView.Adapter mAdapter;
@@ -85,6 +94,8 @@ public class MainActivity extends AppCompatActivity
     ArrayList<Reminder> reminders;
 
     private static final int NOTIFICATION_ID_1 = 1;
+
+    private static Location prevLocn = null, newLocn = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +169,7 @@ public class MainActivity extends AppCompatActivity
     private void addCurrentlyStoredPlacesToArrayList() {
 
         menu_ourPlcaes.clear();
-        indexSubmenu=0;
+        indexSubmenu = 0;
 
         RealmResults<YourPlaces> places = realm.where(YourPlaces.class).findAll();
 
@@ -312,6 +323,8 @@ public class MainActivity extends AppCompatActivity
         final String LAT = Double.toString(latLng.latitude);
         final String LNG = Double.toString(latLng.longitude);
 
+        String temp;
+
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm bgRealm) {
@@ -326,9 +339,18 @@ public class MainActivity extends AppCompatActivity
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
+
+                //this adds your places to menu in navigation  drawer
+                addCurrentlyStoredPlacesToArrayList();
+
+                //start geo fence addition process
+                Geofence geofence = createGeofence(latLng, GEOFENCE_RADIUS,name);
+                GeofencingRequest geofenceRequest = createGeofenceRequest(geofence);
+                addGeofence(geofenceRequest);
+                Toast.makeText(MainActivity.this, "bkhg"+geofence.getRequestId().toString(), Toast.LENGTH_SHORT).show();
+
                 // Transaction was a success.
                 Toast.makeText(MainActivity.this, "Successfully Stored", Toast.LENGTH_SHORT).show();
-                addCurrentlyStoredPlacesToArrayList();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -337,6 +359,53 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+
+    // Create a Geofence
+    private Geofence createGeofence(LatLng latLng, float radius ,String idName) {
+        return new Geofence.Builder()
+                .setRequestId(idName)
+                .setCircularRegion(latLng.latitude, latLng.longitude, radius)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
+                        | Geofence.GEOFENCE_TRANSITION_EXIT )
+                .setLoiteringDelay(5).build();
+    }
+
+    // Create a Geofence Request
+    private GeofencingRequest createGeofenceRequest(Geofence geofence) {
+        return new GeofencingRequest.Builder()
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .addGeofence(geofence)
+                .build();
+    }
+
+    // Add the created GeofenceRequest to the device's monitoring list
+    private void addGeofence(GeofencingRequest request) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
+            }
+        } else {
+            LocationServices.GeofencingApi.addGeofences(
+                    mGoogleApiClient,
+                    request,
+                    createGeofencePendingIntent()
+            );
+        }
+    }
+
+    private PendingIntent geoFencePendingIntent;
+    private int GEOFENCE_REQ_CODE = 2;
+
+    private PendingIntent createGeofencePendingIntent() {
+        if (geoFencePendingIntent != null)
+            return geoFencePendingIntent;
+
+        Intent intent = new Intent(this, GeofenceTransitionService.class);
+        return PendingIntent.getService(
+                this, GEOFENCE_REQ_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //this method is triggered as the connection is established(See onStart())
@@ -351,6 +420,7 @@ public class MainActivity extends AppCompatActivity
 
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        //make it 20 mins
         mLocationRequest.setInterval(10000);
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -372,29 +442,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
-        float[] dist = new float[1];
+        if (prevLocn == null) {
+            prevLocn = location;
+            newLocn = location;
+        } else {
+            prevLocn = newLocn;
+            newLocn = location;
 
-        for (int i = 0; i < yourPlacesArrayList.size(); i++) {
+            float dist;
+            dist = newLocn.distanceTo(prevLocn);
 
-            Location.distanceBetween(Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLAT()), Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLNG()),
-                    location.getLatitude(), location.getLongitude(), dist);
-
-            if (dist[0] < 500) {
-                Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
-
-                //  NotificationCompat.Action action= new NotificationCompat.Action.Builder(R.drawable.logo_ sarah,getString("open app",actionP));
-
-                builder.setSmallIcon(R.drawable.logo_sarah);
-                builder.setAutoCancel(true);
-                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo_sarah));
-                builder.setContentTitle("from SARAH");
-                builder.setContentText("You have enterred a marked location");
-                builder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
-//                builder.extend(new NotificationCompat.WearableExtender().addAction(action))
-
-                Toast.makeText(this, "test2", Toast.LENGTH_SHORT).show();
-
-                notificationManager.notify(NOTIFICATION_ID_1, builder.build());
+            if (dist < 500) {
+                Toast.makeText(this, "sucess", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -434,21 +493,12 @@ public class MainActivity extends AppCompatActivity
         indexSubmenu++;
 
     }
-//    private void displaySubmenu() {
-////        Log.i(objects.get(0).getName(),"point ma252");
-//        menu_ourPlcaes.add(0, indexSubmenu, Menu.NONE, yourPlacesArrayList.get(indexSubmenu).getName()).setIcon(R.drawable.ic_room_black_24dp).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                currentLocation.setText(yourPlacesArrayList.get(item.getItemId()).getName());
-//                reminders.clear();
-////                reminders.add(new Reminder(objects.get(item.getItemId()).getReminders().get(0), objects.get(item.getItemId()).getTime(),objects.get(item.getItemId()).getChecked().get(0)));
-//                mAdapter.notifyDataSetChanged();
-//                return false;
-//            }
-//        });
-//        indexSubmenu++;
-//
-//    }
+
+    public static Intent makeNotificationIntent(Context context, String msg) {
+        Intent intent = new Intent( context, MainActivity.class );
+        intent.putExtra( "Hello this is sarah", msg );
+        return intent;
+    }
 
 }
 
