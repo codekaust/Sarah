@@ -86,6 +86,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final int NOTIFICATION_ID_1 = 1;
 
+    private static Location prevLocn = null, newLocn = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,7 +160,7 @@ public class MainActivity extends AppCompatActivity
     private void addCurrentlyStoredPlacesToArrayList() {
 
         menu_ourPlcaes.clear();
-        indexSubmenu=0;
+        indexSubmenu = 0;
 
         RealmResults<YourPlaces> places = realm.where(YourPlaces.class).findAll();
 
@@ -351,6 +353,7 @@ public class MainActivity extends AppCompatActivity
 
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        //make it 20 mins
         mLocationRequest.setInterval(10000);
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -372,30 +375,43 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
-        float[] dist = new float[1];
+        if (prevLocn == null) {
+            prevLocn = location;
+            newLocn = location;
+        } else {
+            prevLocn = newLocn;
+            newLocn = location;
 
-        for (int i = 0; i < yourPlacesArrayList.size(); i++) {
+            float dist;
+            dist = newLocn.distanceTo(prevLocn);
 
-            Location.distanceBetween(Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLAT()), Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLNG()),
-                    location.getLatitude(), location.getLongitude(), dist);
-
-            if (dist[0] < 500) {
-                Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
-
-                //  NotificationCompat.Action action= new NotificationCompat.Action.Builder(R.drawable.logo_ sarah,getString("open app",actionP));
-
-                builder.setSmallIcon(R.drawable.logo_sarah);
-                builder.setAutoCancel(true);
-                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo_sarah));
-                builder.setContentTitle("from SARAH");
-                builder.setContentText("You have enterred a marked location");
-                builder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
-//                builder.extend(new NotificationCompat.WearableExtender().addAction(action))
-
-                Toast.makeText(this, "test2", Toast.LENGTH_SHORT).show();
-
-                notificationManager.notify(NOTIFICATION_ID_1, builder.build());
+            if (dist < 500) {
+                Toast.makeText(this, "sucess", Toast.LENGTH_SHORT).show();
             }
+
+//        for (int i = 0; i < yourPlacesArrayList.size(); i++) {
+//
+//            Location.distanceBetween(Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLAT()), Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLNG()),
+//                    location.getLatitude(), location.getLongitude(), dist);
+//
+//            if (dist[0] < 500) {
+//                Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
+//
+//                //  NotificationCompat.Action action= new NotificationCompat.Action.Builder(R.drawable.logo_ sarah,getString("open app",actionP));
+//
+//                builder.setSmallIcon(R.drawable.logo_sarah);
+//                builder.setAutoCancel(true);
+//                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo_sarah));
+//                builder.setContentTitle("from SARAH");
+//                builder.setContentText("You have enterred a marked location");
+//                builder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
+////                builder.extend(new NotificationCompat.WearableExtender().addAction(action))
+//
+//                Toast.makeText(this, "test2", Toast.LENGTH_SHORT).show();
+//
+//                notificationManager.notify(NOTIFICATION_ID_1, builder.build());
+//            }
+//        }
         }
     }
 
