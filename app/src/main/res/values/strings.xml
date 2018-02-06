@@ -18,4 +18,8 @@
     <string name="place_out">Place out</string>
     <string name="sample_place_in">Rajendra bhawan</string>
     <string name="sample_place_out">LHC</string>
+    <string name="date">date</string>
+    <string name="time">time</string>
+    <!--<string name="sample_place_out">LHC</string>-->
+    <!--<string name="sample_place_out">LHC</string>-->
 </resources>

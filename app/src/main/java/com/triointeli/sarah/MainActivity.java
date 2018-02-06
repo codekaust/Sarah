@@ -28,8 +28,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,7 +79,9 @@ public class MainActivity extends AppCompatActivity
     int subMenuCount;
     TextView currentLocation;
     private int indexSubmenu;
-
+    Button datePicker,timePicker;
+    ImageView saveDateTime;
+    TextView datetext,timetext;
     NotificationManagerCompat notificationManager;
 
     Realm realm;
@@ -117,6 +121,10 @@ public class MainActivity extends AppCompatActivity
         addReminderPopup = getLayoutInflater().inflate(R.layout.add_reminder_popup, null);
         addReminderPopup2 = getLayoutInflater().inflate(R.layout.add_reminder_popup_2, null);
         addReminderPopup3 = getLayoutInflater().inflate(R.layout.add_reminder_popup_3, null);
+
+        datePicker = (Button) addReminderPopup2.findViewById(R.id.dateButton);
+        timePicker = (Button) addReminderPopup2.findViewById(R.id.timeButton);
+        saveDateTime = (ImageView) addReminderPopup2.findViewById(R.id.next1st_ImageBtn_AddReminder_popup2);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
