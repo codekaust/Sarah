@@ -368,7 +368,7 @@ public class MainActivity extends AppCompatActivity
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
                         | Geofence.GEOFENCE_TRANSITION_EXIT |Geofence.GEOFENCE_TRANSITION_DWELL )
-                .build();
+                .setLoiteringDelay(5).build();
     }
 
     // Create a Geofence Request
@@ -453,30 +453,6 @@ public class MainActivity extends AppCompatActivity
             if (dist < 500) {
                 Toast.makeText(this, "sucess", Toast.LENGTH_SHORT).show();
             }
-
-//        for (int i = 0; i < yourPlacesArrayList.size(); i++) {
-//
-//            Location.distanceBetween(Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLAT()), Double.parseDouble(yourPlacesArrayList.get(i).getPlaceLNG()),
-//                    location.getLatitude(), location.getLongitude(), dist);
-//
-//            if (dist[0] < 500) {
-//                Toast.makeText(this, "test", Toast.LENGTH_SHORT).show();
-//
-//                //  NotificationCompat.Action action= new NotificationCompat.Action.Builder(R.drawable.logo_ sarah,getString("open app",actionP));
-//
-//                builder.setSmallIcon(R.drawable.logo_sarah);
-//                builder.setAutoCancel(true);
-//                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo_sarah));
-//                builder.setContentTitle("from SARAH");
-//                builder.setContentText("You have enterred a marked location");
-//                builder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
-////                builder.extend(new NotificationCompat.WearableExtender().addAction(action))
-//
-//                Toast.makeText(this, "test2", Toast.LENGTH_SHORT).show();
-//
-//                notificationManager.notify(NOTIFICATION_ID_1, builder.build());
-//            }
-//        }
         }
     }
 
