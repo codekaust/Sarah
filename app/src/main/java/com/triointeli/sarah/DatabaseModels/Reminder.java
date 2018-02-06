@@ -4,16 +4,16 @@ import io.realm.RealmObject;
 
 public class Reminder extends RealmObject {
     private String reminderContent;
-    private String dateTime;
+    private Long dateTime;
     private boolean done;
     private String placeOnEnter;
     private String placeOnLeave;
 
-    public Reminder(){
+    public Reminder() {
 
     }
 
-    public Reminder(String reminderContent, String dateTime, boolean done, String placeOnEnter, String placeOnLeave) {
+    public Reminder(String reminderContent, Long dateTime, boolean done, String placeOnEnter, String placeOnLeave) {
         this.reminderContent = reminderContent;
         this.dateTime = dateTime;
         this.done = done;
@@ -29,11 +29,11 @@ public class Reminder extends RealmObject {
         this.reminderContent = reminderContent;
     }
 
-    public String getDateTime() {
+    public Long getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(String dateTime) {
+    public void setDateTime(Long dateTime) {
         this.dateTime = dateTime;
     }
 

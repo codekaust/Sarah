@@ -1,5 +1,7 @@
 package com.triointeli.sarah;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -31,9 +33,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -52,6 +59,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.triointeli.sarah.DatabaseModels.Reminder;
 import com.triointeli.sarah.DatabaseModels.YourPlaces;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -79,20 +87,18 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private NotificationCompat.Builder builder;
 
-    private View addReminderPopup;
-    private View addReminderPopup2;
-    private View addReminderPopup3;
     Menu menu_ourPlcaes;
     int subMenuCount;
     TextView currentLocation;
     private int indexSubmenu;
-
     NotificationManagerCompat notificationManager;
 
+    AlertDialog dialogAddPlace, dialogAddPlace2, dialogAddPlace1;
+
+    private boolean datePickerShow = false;
+    private boolean timePickerShow = false;
     Realm realm;
-
-    ArrayList<Reminder> reminders;
-
+    public static ArrayList<Reminder> reminders;
     private static final int NOTIFICATION_ID_1 = 1;
 
     private static Location prevLocn = null, newLocn = null;
@@ -114,32 +120,56 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         buildGoogleApiClent();
+        Toast.makeText(MainActivity.this, "hello 123", Toast.LENGTH_SHORT).show();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Menu menu = navigationView.getMenu();
         menu.add("Title1");
-        menu.add("Title2");
-        //menu.getItem(2).getSubMenu().add("home");*/
         menu_ourPlcaes = menu.getItem(3).getSubMenu();
         subMenuCount = menu_ourPlcaes.size();
+
         reminders = new ArrayList<>();
 
-        addReminderPopup = getLayoutInflater().inflate(R.layout.add_reminder_popup, null);
-        addReminderPopup2 = getLayoutInflater().inflate(R.layout.add_reminder_popup_2, null);
-        addReminderPopup3 = getLayoutInflater().inflate(R.layout.add_reminder_popup_3, null);
+        updateRemiderArrayList();
 
+        reminders.add(new Reminder("abcd", 213456l, true, "ritik", "kumar"));
+        Log.i(reminders.size() + "", "point ma124");
+        for (int i = 0; i < reminders.size(); i++) {
+            Log.i("point ma126", reminders.get(i).getReminderContent());
+        }
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setView(addReminderPopup);
-                final AlertDialog dialogAddPlace = builder.create();
-                dialogAddPlace.setCustomTitle(getLayoutInflater().inflate(R.layout.add_place_popup_title, null));
-//                dialogAddPlace.show();
+                Toast.makeText(MainActivity.this, "hello test1", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, AddReminderActivity.class));
+
             }
         });
+
+//        datePickerButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                DatePickerFragment dialog = new DatePickerFragment();
+//                dialog.show(getSupportFragmentManager(), "MainActivity.DateDialog");
+//            }
+//        });
+//
+//        timePickerButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (timePickerShow) {
+//                    timePickerButton.setVisibility(View.GONE);
+//                    timePickerShow = false;
+//                } else {
+//                    timePickerButton.setVisibility(View.VISIBLE);
+//                    timePickerShow = true;
+//                }
+//            }
+//        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -147,7 +177,8 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        /*mAdapter = new ReminderAdapter(reminders);
+//        DateFormat.getTimeInstance(DateFormat.SHORT).format(calander);
+        mAdapter = new ReminderAdapter(reminders);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -156,8 +187,8 @@ public class MainActivity extends AppCompatActivity
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        reminders.add(new Reminder("fine", "yeah", true));
-        reminders.add(new Reminder("wtf", "fk u", false));*/
+//        reminders.add(new Reminder("fine", "yeah", true));
+//        reminders.add(new Reminder("wtf", "fk u", false));
 
         yourPlacesArrayList = new ArrayList<YourPlaces>();
         addCurrentlyStoredPlacesToArrayList();
@@ -165,6 +196,28 @@ public class MainActivity extends AppCompatActivity
         builder = new NotificationCompat.Builder(this);
         notificationManager = NotificationManagerCompat.from(getApplicationContext());
     }
+
+//    @Override
+//    protected Dialog onCreateDialog(int id) {
+//        // TODO Auto-generated method stub
+//        if (id == 999) {
+//            return new DatePickerDialog(this,
+//                    myDateListener, year, month, day);
+//        }
+//        return null;
+//    }
+
+    private DatePickerDialog.OnDateSetListener myDateListener = new
+            DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker arg0,
+                                      int arg1, int arg2, int arg3) {
+                    // arg1 = year
+                    // arg2 = month
+                    // arg3 = day
+//                    showDate(arg1, arg2+1, arg3);
+                }
+            };
 
     private void addCurrentlyStoredPlacesToArrayList() {
 
@@ -466,7 +519,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-
+        Toast.makeText(MainActivity.this, "hello 461", Toast.LENGTH_SHORT).show();
+        Log.i(reminders.size() + "", "point ma124");
+        for (int i = 0; i < reminders.size(); i++) {
+            Log.i("point ma464", reminders.get(i).getReminderContent());
+        }
         mGoogleApiClient.connect();
     }
 
@@ -475,6 +532,7 @@ public class MainActivity extends AppCompatActivity
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+        Toast.makeText(MainActivity.this, "hello 789", Toast.LENGTH_SHORT).show();
 
         super.onStop();
     }
@@ -484,13 +542,20 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 currentLocation.setText(place.getName());
-                reminders.clear();
-//                mAdapter.notifyDataSetChanged();
+//                displayReminder(place);
                 return false;
             }
         });
 
         indexSubmenu++;
+    }
+
+    private void displayReminder(final YourPlaces place) {
+        reminders.clear();
+//        for(int i=0;i<reminders.size();i++){
+//            if(reminders.)}
+//
+        mAdapter.notifyDataSetChanged();
 
     }
 
@@ -498,6 +563,20 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent( context, MainActivity.class );
         intent.putExtra( "Hello this is sarah", msg );
         return intent;
+    }
+
+    public void updateRemiderArrayList() {
+
+        RealmResults<Reminder> rmndr = realm.where(Reminder.class).findAll();
+
+        // Use an iterator to add all
+        realm.beginTransaction();
+
+        for (Reminder rmndr_ : rmndr) {
+            reminders.add(rmndr_);
+        }
+
+        realm.commitTransaction();
     }
 
 }

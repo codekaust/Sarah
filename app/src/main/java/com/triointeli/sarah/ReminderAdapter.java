@@ -1,6 +1,7 @@
+package com.triointeli.sarah;
 import android.support.v7.widget.RecyclerView;
 
-/*import com.triointeli.sarah.DatabaseModels.Reminder;
+import com.triointeli.sarah.DatabaseModels.Reminder;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,6 @@ import com.triointeli.sarah.R;
 import java.util.ArrayList;
 
 import com.triointeli.sarah.DatabaseModels.Reminder;
-package com.triointeli.sarah;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,7 +34,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
     private ArrayList<Reminder> reminders;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView remainder;
+        TextView remainder,placeIn,placeout;
         TextView dateTime;
         CheckBox mCheckbox;
 
@@ -42,7 +42,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
             super(view);
             remainder = (TextView) view.findViewById(R.id.reminder);
             dateTime = (TextView) view.findViewById(R.id.dateTime);
-            mCheckbox = (CheckBox) view.findViewById(R.id.checkbox);
+//            mCheckbox = (CheckBox) view.findViewById(R.id.checkbox);
+            placeIn=(TextView)view.findViewById(R.id.placeIn);
+            placeout=(TextView)view.findViewById(R.id.placeOut);
         }
     }
 
@@ -61,10 +63,11 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Reminder reminder = reminders.get(position);
 
-        holder.remainder.setText(reminder.getRemainder());
-        holder.dateTime.setText(reminder.getDateTime());
-        holder.mCheckbox.setChecked(reminder.isDone());
-
+        holder.remainder.setText(reminder.getReminderContent());
+        holder.dateTime.setText(Long.toString(reminder.getDateTime()));
+//        holder.mCheckbox.setChecked(reminder.isDone());
+        holder.placeIn.setText(reminder.getPlaceOnEnter());
+        holder.placeout.setText(reminder.getPlaceOnLeave());
 
     }
 
@@ -75,4 +78,3 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
 
 
 }
-*/

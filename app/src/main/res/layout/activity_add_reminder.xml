@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp"
+    tools:context="com.triointeli.sarah.AddReminderActivity">
+
+    <LinearLayout
+        android:id="@+id/placeDataLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <EditText
+            android:id="@+id/placeOnEnter_EditText_AddRem_popup1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="placeOnEnter" />
+
+        <EditText
+            android:id="@+id/placeOnLeave_EditText_AddRem_popup1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="placeOnLeave" />
+
+        <Spinner
+            android:id="@+id/s1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white" />
+
+        <Spinner
+            android:id="@+id/s"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/white" />
+
+        <ImageButton
+            android:id="@+id/next1st_ImageBtn_AddReminder_popup1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:backgroundTint="#00444444"
+            android:padding="10dp"
+            android:src="@drawable/ic_menu_send" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/dateTimeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/dateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date" />
+
+            <TextView
+                android:id="@+id/dateText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="@string/date"
+                android:textSize="18sp" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/timeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/time" />
+
+            <TextView
+                android:id="@+id/timeText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:hint="@string/time"
+                android:textSize="18sp" />
+
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/next1st_ImageBtn_AddReminder_popup2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:padding="10dp"
+            android:src="@drawable/ic_menu_send" />
+
+        <TimePicker
+            android:id="@+id/alarmTimePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:visibility="gone" />
+
+        <DatePicker
+            android:id="@+id/alarmDatePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            android:visibility="visible" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/remainderLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <EditText
+            android:id="@+id/addNewReminderContent_popup3"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:hint="Add reminder content ..."
+            android:padding="10dp" />
+
+        <ImageButton
+            android:id="@+id/next1st_ImageBtn_AddReminder_popup3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:backgroundTint="#00444444"
+            android:padding="10dp"
+            android:src="@drawable/ic_menu_send" />
+
+    </LinearLayout>
+</RelativeLayout>
