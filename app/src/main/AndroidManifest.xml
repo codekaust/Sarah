@@ -28,6 +28,11 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".LocationMonitoringService"
+            android:enabled="true"
+            android:process=":location_monitoring" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
