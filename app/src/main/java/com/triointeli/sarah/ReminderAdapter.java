@@ -34,7 +34,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
     private ArrayList<Reminder> reminders;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView remainder;
+        TextView remainder,placeIn,placeout;
         TextView dateTime;
         CheckBox mCheckbox;
 
@@ -42,7 +42,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
             super(view);
             remainder = (TextView) view.findViewById(R.id.reminder);
             dateTime = (TextView) view.findViewById(R.id.dateTime);
-            mCheckbox = (CheckBox) view.findViewById(R.id.checkbox);
+//            mCheckbox = (CheckBox) view.findViewById(R.id.checkbox);
+            placeIn=(TextView)view.findViewById(R.id.placeIn);
+            placeout=(TextView)view.findViewById(R.id.placeOut);
         }
     }
 
@@ -63,8 +65,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
 
         holder.remainder.setText(reminder.getReminderContent());
         holder.dateTime.setText(reminder.getDateTime());
-        holder.mCheckbox.setChecked(reminder.isDone());
-
+//        holder.mCheckbox.setChecked(reminder.isDone());
+        holder.placeIn.setText(reminder.getPlaceOnEnter());
+        holder.placeout.setText(reminder.getPlaceOnLeave());
 
     }
 

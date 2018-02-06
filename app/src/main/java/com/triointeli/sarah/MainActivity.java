@@ -21,6 +21,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -78,31 +79,18 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private NotificationCompat.Builder builder;
 
-    private View addReminderPopup;
-    private View addReminderPopup2;
-    private View addReminderPopup3;
     Menu menu_ourPlcaes;
     int subMenuCount;
     TextView currentLocation;
     private int indexSubmenu;
-    Button datePickerButton, timePickerButton;
-    ImageView saveDateTime,savePlaceEnterExit;
-    TextView datetext, timetext;
     NotificationManagerCompat notificationManager;
-    EditText placeEnter,placeExit,reminderContent;
-    private TimePicker alarmTimePicker;
-    private DatePicker alarmDatePicker;
+
+    AlertDialog dialogAddPlace, dialogAddPlace2, dialogAddPlace1;
+
     private boolean datePickerShow = false;
     private boolean timePickerShow = false;
     Realm realm;
-    AlertDialog dialogAddPlace;
-    AlertDialog dialogAddPlace2;
-    AlertDialog dialogAddPlace3;
-    ArrayList<Reminder> reminders;
-    String placeEnterText,placeExitText;
-    String timeTextString,dateTextString,reminderContentString;
-    ImageButton reminderContentSetButton;
-    AlertDialog.Builder builderReminder;
+    public static ArrayList<Reminder> reminders;
     private static final int NOTIFICATION_ID_1 = 1;
 
     @Override
@@ -122,104 +110,31 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         buildGoogleApiClent();
+        Toast.makeText(MainActivity.this, "hello 123", Toast.LENGTH_SHORT).show();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Menu menu = navigationView.getMenu();
         menu.add("Title1");
-        menu.add("Title2");
-        //menu.getItem(2).getSubMenu().add("home");*/
         menu_ourPlcaes = menu.getItem(3).getSubMenu();
         subMenuCount = menu_ourPlcaes.size();
         reminders = new ArrayList<>();
-        addReminderPopup = getLayoutInflater().inflate(R.layout.add_reminder_popup, null);
-        addReminderPopup2 = getLayoutInflater().inflate(R.layout.add_reminder_popup_2, null);
-        addReminderPopup3 = getLayoutInflater().inflate(R.layout.add_reminder_popup_3, null);
 
-        datePickerButton = (Button) addReminderPopup2.findViewById(R.id.dateButton);
-        timePickerButton = (Button) addReminderPopup2.findViewById(R.id.timeButton);
-        saveDateTime = (ImageView) addReminderPopup2.findViewById(R.id.next1st_ImageBtn_AddReminder_popup2);
-        placeEnter=(EditText)addReminderPopup.findViewById(R.id.placeOnEnter_EditText_AddRem_popup1);
-        placeExit=(EditText)addReminderPopup.findViewById(R.id.placeOnLeave_EditText_AddRem_popup1);
-        savePlaceEnterExit=(ImageView)addReminderPopup.findViewById(R.id.next1st_ImageBtn_AddReminder_popup1);
-        placeEnter.setText("home");
-        placeExit.setText("LHC");
-        datetext=(TextView)addReminderPopup2.findViewById(R.id.dateText);
-        timetext=(TextView)addReminderPopup2.findViewById(R.id.timeText);
-        reminderContent=(EditText)addReminderPopup3.findViewById(R.id.addNewReminderContent_popup3);
-        reminderContentSetButton=(ImageButton)addReminderPopup3.findViewById(R.id.next1st_ImageBtn_AddReminder_popup3);
-        reminderContent.setText("phn-005");
-
+        reminders.add(new Reminder("abcd","tyyu",true,"ritik","kumar"));
+        Log.i(reminders.size()+"","point ma124");
+        for (int i=0;i<reminders.size();i++){
+            Log.i("point ma126",reminders.get(i).getReminderContent());
+        }
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                builderReminder = new AlertDialog.Builder(MainActivity.this);
-                builderReminder.setView(addReminderPopup);
-                dialogAddPlace = builderReminder.create();
-                dialogAddPlace.setCustomTitle(getLayoutInflater().inflate(R.layout.add_place_popup_title, null));
-                dialogAddPlace.show();
+                Toast.makeText(MainActivity.this, "hello test1", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this,AddReminderActivity.class));
 
             }
         });
 
-        // ERROR ERROR       @@@@@@@@ERROR
-
-
-
-
-        savePlaceEnterExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                placeEnterText = placeEnter.getText().toString();
-                placeExitText = placeExit.getText().toString();
-                builderReminder.show().dismiss();
-//                builderReminder.dism)
-//                dialogAddPlace.
-//                dialogAddPlace.cancel();
-//                AlertDialog.Builder builderReminder2 = new AlertDialog.Builder(MainActivity.this);
-                builderReminder.setView(addReminderPopup2);
-                dialogAddPlace2 = builderReminder.create();
-                dialogAddPlace2.setCustomTitle(addReminderPopup2);
-                dialogAddPlace2.show();
-                datetext.setText("12th jan");
-                timetext.setText("4:00p.m");
-            }
-        });
-
-        saveDateTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeTextString = timetext.getText().toString();
-                dateTextString = datetext.getText().toString();
-                dialogAddPlace2.cancel();
-                AlertDialog.Builder builderReminder3 = new AlertDialog.Builder(MainActivity.this);
-                builderReminder3.setView(addReminderPopup3);
-                final AlertDialog dialogAddPlace3 = builderReminder3.create();
-                dialogAddPlace3.setCustomTitle(addReminderPopup3);
-                dialogAddPlace3.show();
-                datetext.setText("12th jan");
-                timetext.setText("4:00p.m");
-            }
-        });
-
-        reminderContentSetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reminderContentString=reminderContent.getText().toString();
-                reminders.add(new Reminder(reminderContentString,dateTextString+"@"+timeTextString,true,placeEnterText,placeExitText));
-                dialogAddPlace3.cancel();
-            }
-        });
-
-
-
-
-
-        datetext.setText("12th jan");
-        timetext.setText("4:00p.m");
-        alarmTimePicker = (TimePicker) addReminderPopup2.findViewById(R.id.alarmTimePicker);
-        alarmDatePicker = (DatePicker) addReminderPopup2.findViewById(R.id.alarmDatePicker);
 //        datePickerButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -228,20 +143,19 @@ public class MainActivity extends AppCompatActivity
 //                dialog.show(getSupportFragmentManager(), "MainActivity.DateDialog");
 //            }
 //        });
-
-        timePickerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (timePickerShow) {
-                    timePickerButton.setVisibility(View.GONE);
-                    timePickerShow = false;
-                } else {
-                    timePickerButton.setVisibility(View.VISIBLE);
-                    timePickerShow = true;
-                }
-            }
-        });
-
+//
+//        timePickerButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (timePickerShow) {
+//                    timePickerButton.setVisibility(View.GONE);
+//                    timePickerShow = false;
+//                } else {
+//                    timePickerButton.setVisibility(View.VISIBLE);
+//                    timePickerShow = true;
+//                }
+//            }
+//        });
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -544,7 +458,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-
+        Toast.makeText(MainActivity.this, "hello 461", Toast.LENGTH_SHORT).show();
+        Log.i(reminders.size()+"","point ma124");
+        for (int i=0;i<reminders.size();i++){
+            Log.i("point ma464",reminders.get(i).getReminderContent());
+        }
         mGoogleApiClient.connect();
     }
 
@@ -553,6 +471,7 @@ public class MainActivity extends AppCompatActivity
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+        Toast.makeText(MainActivity.this, "hello 789", Toast.LENGTH_SHORT).show();
 
         super.onStop();
     }
@@ -562,17 +481,20 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 currentLocation.setText(place.getName());
-                reminders.clear();
-//                mAdapter.notifyDataSetChanged();
+//                displayReminder(place);
                 return false;
             }
         });
 
         indexSubmenu++;
-
     }
 
     private void displayReminder(final YourPlaces place) {
+        reminders.clear();
+//        for(int i=0;i<reminders.size();i++){
+//            if(reminders.)}
+//
+        mAdapter.notifyDataSetChanged();
 
     }
 //    private void displaySubmenu() {
