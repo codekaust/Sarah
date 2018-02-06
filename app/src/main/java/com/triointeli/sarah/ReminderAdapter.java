@@ -1,6 +1,7 @@
+package com.triointeli.sarah;
 import android.support.v7.widget.RecyclerView;
 
-/*import com.triointeli.sarah.DatabaseModels.Reminder;
+import com.triointeli.sarah.DatabaseModels.Reminder;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,6 @@ import com.triointeli.sarah.R;
 import java.util.ArrayList;
 
 import com.triointeli.sarah.DatabaseModels.Reminder;
-package com.triointeli.sarah;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -61,7 +61,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Reminder reminder = reminders.get(position);
 
-        holder.remainder.setText(reminder.getRemainder());
+        holder.remainder.setText(reminder.getReminderContent());
         holder.dateTime.setText(reminder.getDateTime());
         holder.mCheckbox.setChecked(reminder.isDone());
 
@@ -75,4 +75,3 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
 
 
 }
-*/

@@ -1,5 +1,7 @@
 package com.triointeli.sarah;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -28,11 +30,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -47,6 +52,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.triointeli.sarah.DatabaseModels.Reminder;
 import com.triointeli.sarah.DatabaseModels.YourPlaces;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -79,15 +85,24 @@ public class MainActivity extends AppCompatActivity
     int subMenuCount;
     TextView currentLocation;
     private int indexSubmenu;
-    Button datePicker,timePicker;
-    ImageView saveDateTime;
-    TextView datetext,timetext;
+    Button datePickerButton, timePickerButton;
+    ImageView saveDateTime,savePlaceEnterExit;
+    TextView datetext, timetext;
     NotificationManagerCompat notificationManager;
-
+    EditText placeEnter,placeExit,reminderContent;
+    private TimePicker alarmTimePicker;
+    private DatePicker alarmDatePicker;
+    private boolean datePickerShow = false;
+    private boolean timePickerShow = false;
     Realm realm;
-
+    AlertDialog dialogAddPlace;
+    AlertDialog dialogAddPlace2;
+    AlertDialog dialogAddPlace3;
     ArrayList<Reminder> reminders;
-
+    String placeEnterText,placeExitText;
+    String timeTextString,dateTextString,reminderContentString;
+    ImageButton reminderContentSetButton;
+    AlertDialog.Builder builderReminder;
     private static final int NOTIFICATION_ID_1 = 1;
 
     @Override
@@ -117,26 +132,117 @@ public class MainActivity extends AppCompatActivity
         menu_ourPlcaes = menu.getItem(3).getSubMenu();
         subMenuCount = menu_ourPlcaes.size();
         reminders = new ArrayList<>();
-
         addReminderPopup = getLayoutInflater().inflate(R.layout.add_reminder_popup, null);
         addReminderPopup2 = getLayoutInflater().inflate(R.layout.add_reminder_popup_2, null);
         addReminderPopup3 = getLayoutInflater().inflate(R.layout.add_reminder_popup_3, null);
 
-        datePicker = (Button) addReminderPopup2.findViewById(R.id.dateButton);
-        timePicker = (Button) addReminderPopup2.findViewById(R.id.timeButton);
+        datePickerButton = (Button) addReminderPopup2.findViewById(R.id.dateButton);
+        timePickerButton = (Button) addReminderPopup2.findViewById(R.id.timeButton);
         saveDateTime = (ImageView) addReminderPopup2.findViewById(R.id.next1st_ImageBtn_AddReminder_popup2);
+        placeEnter=(EditText)addReminderPopup.findViewById(R.id.placeOnEnter_EditText_AddRem_popup1);
+        placeExit=(EditText)addReminderPopup.findViewById(R.id.placeOnLeave_EditText_AddRem_popup1);
+        savePlaceEnterExit=(ImageView)addReminderPopup.findViewById(R.id.next1st_ImageBtn_AddReminder_popup1);
+        placeEnter.setText("home");
+        placeExit.setText("LHC");
+        datetext=(TextView)addReminderPopup2.findViewById(R.id.dateText);
+        timetext=(TextView)addReminderPopup2.findViewById(R.id.timeText);
+        reminderContent=(EditText)addReminderPopup3.findViewById(R.id.addNewReminderContent_popup3);
+        reminderContentSetButton=(ImageButton)addReminderPopup3.findViewById(R.id.next1st_ImageBtn_AddReminder_popup3);
+        reminderContent.setText("phn-005");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setView(addReminderPopup);
-                final AlertDialog dialogAddPlace = builder.create();
+                builderReminder = new AlertDialog.Builder(MainActivity.this);
+                builderReminder.setView(addReminderPopup);
+                dialogAddPlace = builderReminder.create();
                 dialogAddPlace.setCustomTitle(getLayoutInflater().inflate(R.layout.add_place_popup_title, null));
-//                dialogAddPlace.show();
+                dialogAddPlace.show();
+
             }
         });
+
+        // ERROR ERROR       @@@@@@@@ERROR
+
+
+
+
+        savePlaceEnterExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                placeEnterText = placeEnter.getText().toString();
+                placeExitText = placeExit.getText().toString();
+                builderReminder.show().dismiss();
+//                builderReminder.dism)
+//                dialogAddPlace.
+//                dialogAddPlace.cancel();
+//                AlertDialog.Builder builderReminder2 = new AlertDialog.Builder(MainActivity.this);
+                builderReminder.setView(addReminderPopup2);
+                dialogAddPlace2 = builderReminder.create();
+                dialogAddPlace2.setCustomTitle(addReminderPopup2);
+                dialogAddPlace2.show();
+                datetext.setText("12th jan");
+                timetext.setText("4:00p.m");
+            }
+        });
+
+        saveDateTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeTextString = timetext.getText().toString();
+                dateTextString = datetext.getText().toString();
+                dialogAddPlace2.cancel();
+                AlertDialog.Builder builderReminder3 = new AlertDialog.Builder(MainActivity.this);
+                builderReminder3.setView(addReminderPopup3);
+                final AlertDialog dialogAddPlace3 = builderReminder3.create();
+                dialogAddPlace3.setCustomTitle(addReminderPopup3);
+                dialogAddPlace3.show();
+                datetext.setText("12th jan");
+                timetext.setText("4:00p.m");
+            }
+        });
+
+        reminderContentSetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                reminderContentString=reminderContent.getText().toString();
+                reminders.add(new Reminder(reminderContentString,dateTextString+"@"+timeTextString,true,placeEnterText,placeExitText));
+                dialogAddPlace3.cancel();
+            }
+        });
+
+
+
+
+
+        datetext.setText("12th jan");
+        timetext.setText("4:00p.m");
+        alarmTimePicker = (TimePicker) addReminderPopup2.findViewById(R.id.alarmTimePicker);
+        alarmDatePicker = (DatePicker) addReminderPopup2.findViewById(R.id.alarmDatePicker);
+//        datePickerButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                DatePickerFragment dialog = new DatePickerFragment();
+//                dialog.show(getSupportFragmentManager(), "MainActivity.DateDialog");
+//            }
+//        });
+
+        timePickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (timePickerShow) {
+                    timePickerButton.setVisibility(View.GONE);
+                    timePickerShow = false;
+                } else {
+                    timePickerButton.setVisibility(View.VISIBLE);
+                    timePickerShow = true;
+                }
+            }
+        });
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -144,7 +250,8 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        /*mAdapter = new ReminderAdapter(reminders);
+//        DateFormat.getTimeInstance(DateFormat.SHORT).format(calander);
+        mAdapter = new ReminderAdapter(reminders);
 
         mRecyclerView.setAdapter(mAdapter);
 
@@ -153,8 +260,8 @@ public class MainActivity extends AppCompatActivity
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        reminders.add(new Reminder("fine", "yeah", true));
-        reminders.add(new Reminder("wtf", "fk u", false));*/
+//        reminders.add(new Reminder("fine", "yeah", true));
+//        reminders.add(new Reminder("wtf", "fk u", false));
 
         yourPlacesArrayList = new ArrayList<YourPlaces>();
         addCurrentlyStoredPlacesToArrayList();
@@ -163,10 +270,32 @@ public class MainActivity extends AppCompatActivity
         notificationManager = NotificationManagerCompat.from(getApplicationContext());
     }
 
+//    @Override
+//    protected Dialog onCreateDialog(int id) {
+//        // TODO Auto-generated method stub
+//        if (id == 999) {
+//            return new DatePickerDialog(this,
+//                    myDateListener, year, month, day);
+//        }
+//        return null;
+//    }
+
+    private DatePickerDialog.OnDateSetListener myDateListener = new
+            DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker arg0,
+                                      int arg1, int arg2, int arg3) {
+                    // arg1 = year
+                    // arg2 = month
+                    // arg3 = day
+//                    showDate(arg1, arg2+1, arg3);
+                }
+            };
+
     private void addCurrentlyStoredPlacesToArrayList() {
 
         menu_ourPlcaes.clear();
-        indexSubmenu=0;
+        indexSubmenu = 0;
 
         RealmResults<YourPlaces> places = realm.where(YourPlaces.class).findAll();
 
@@ -440,6 +569,10 @@ public class MainActivity extends AppCompatActivity
         });
 
         indexSubmenu++;
+
+    }
+
+    private void displayReminder(final YourPlaces place) {
 
     }
 //    private void displaySubmenu() {
