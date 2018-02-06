@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private static final int GEOFENCE_RADIUS = 200; //in meter
-    private static final String GEOFENCE_REQ_ID = "My Geofence";
 
     private RecyclerView mRecyclerView;
     public static RecyclerView.Adapter mAdapter;
@@ -324,6 +323,8 @@ public class MainActivity extends AppCompatActivity
         final String LAT = Double.toString(latLng.latitude);
         final String LNG = Double.toString(latLng.longitude);
 
+        String temp;
+
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm bgRealm) {
@@ -343,9 +344,10 @@ public class MainActivity extends AppCompatActivity
                 addCurrentlyStoredPlacesToArrayList();
 
                 //start geo fence addition process
-                Geofence geofence = createGeofence(latLng, GEOFENCE_RADIUS);
+                Geofence geofence = createGeofence(latLng, GEOFENCE_RADIUS,name);
                 GeofencingRequest geofenceRequest = createGeofenceRequest(geofence);
                 addGeofence(geofenceRequest);
+                Toast.makeText(MainActivity.this, "bkhg"+geofence.getRequestId().toString(), Toast.LENGTH_SHORT).show();
 
                 // Transaction was a success.
                 Toast.makeText(MainActivity.this, "Successfully Stored", Toast.LENGTH_SHORT).show();
@@ -361,13 +363,13 @@ public class MainActivity extends AppCompatActivity
 
 
     // Create a Geofence
-    private Geofence createGeofence(LatLng latLng, float radius) {
+    private Geofence createGeofence(LatLng latLng, float radius ,String idName) {
         return new Geofence.Builder()
-                .setRequestId(GEOFENCE_REQ_ID)
+                .setRequestId(idName)
                 .setCircularRegion(latLng.latitude, latLng.longitude, radius)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
-                        | Geofence.GEOFENCE_TRANSITION_EXIT |Geofence.GEOFENCE_TRANSITION_DWELL )
+                        | Geofence.GEOFENCE_TRANSITION_EXIT )
                 .setLoiteringDelay(5).build();
     }
 
@@ -395,7 +397,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private PendingIntent geoFencePendingIntent;
-    private final int GEOFENCE_REQ_CODE = 0;
+    private int GEOFENCE_REQ_CODE = 2;
 
     private PendingIntent createGeofencePendingIntent() {
         if (geoFencePendingIntent != null)
@@ -491,21 +493,6 @@ public class MainActivity extends AppCompatActivity
         indexSubmenu++;
 
     }
-//    private void displaySubmenu() {
-////        Log.i(objects.get(0).getName(),"point ma252");
-//        menu_ourPlcaes.add(0, indexSubmenu, Menu.NONE, yourPlacesArrayList.get(indexSubmenu).getName()).setIcon(R.drawable.ic_room_black_24dp).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                currentLocation.setText(yourPlacesArrayList.get(item.getItemId()).getName());
-//                reminders.clear();
-////                reminders.add(new Reminder(objects.get(item.getItemId()).getReminders().get(0), objects.get(item.getItemId()).getTime(),objects.get(item.getItemId()).getChecked().get(0)));
-//                mAdapter.notifyDataSetChanged();
-//                return false;
-//            }
-//        });
-//        indexSubmenu++;
-//
-//    }
 
     public static Intent makeNotificationIntent(Context context, String msg) {
         Intent intent = new Intent( context, MainActivity.class );
