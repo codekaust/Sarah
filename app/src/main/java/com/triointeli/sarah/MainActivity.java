@@ -118,19 +118,22 @@ public class MainActivity extends AppCompatActivity
         menu.add("Title1");
         menu_ourPlcaes = menu.getItem(3).getSubMenu();
         subMenuCount = menu_ourPlcaes.size();
+
         reminders = new ArrayList<>();
 
-        reminders.add(new Reminder("abcd","tyyu",true,"ritik","kumar"));
-        Log.i(reminders.size()+"","point ma124");
-        for (int i=0;i<reminders.size();i++){
-            Log.i("point ma126",reminders.get(i).getReminderContent());
+        updateRemiderArrayList();
+
+        reminders.add(new Reminder("abcd", 213456l, true, "ritik", "kumar"));
+        Log.i(reminders.size() + "", "point ma124");
+        for (int i = 0; i < reminders.size(); i++) {
+            Log.i("point ma126", reminders.get(i).getReminderContent());
         }
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(MainActivity.this, "hello test1", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(MainActivity.this,AddReminderActivity.class));
+                startActivity(new Intent(MainActivity.this, AddReminderActivity.class));
 
             }
         });
@@ -459,9 +462,9 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         Toast.makeText(MainActivity.this, "hello 461", Toast.LENGTH_SHORT).show();
-        Log.i(reminders.size()+"","point ma124");
-        for (int i=0;i<reminders.size();i++){
-            Log.i("point ma464",reminders.get(i).getReminderContent());
+        Log.i(reminders.size() + "", "point ma124");
+        for (int i = 0; i < reminders.size(); i++) {
+            Log.i("point ma464", reminders.get(i).getReminderContent());
         }
         mGoogleApiClient.connect();
     }
@@ -512,6 +515,20 @@ public class MainActivity extends AppCompatActivity
 //        indexSubmenu++;
 //
 //    }
+
+    public void updateRemiderArrayList() {
+
+        RealmResults<Reminder> rmndr = realm.where(Reminder.class).findAll();
+
+        // Use an iterator to add all
+        realm.beginTransaction();
+
+        for (Reminder rmndr_ : rmndr) {
+            reminders.add(rmndr_);
+        }
+
+        realm.commitTransaction();
+    }
 
 }
 
