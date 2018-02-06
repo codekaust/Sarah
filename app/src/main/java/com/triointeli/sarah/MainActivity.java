@@ -1,5 +1,7 @@
 package com.triointeli.sarah;
 
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -19,6 +21,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -37,6 +40,10 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
@@ -52,6 +59,9 @@ import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+
+    private static final int GEOFENCE_RADIUS = 200; //in meter
+    private static final String GEOFENCE_REQ_ID = "My Geofence";
 
     private RecyclerView mRecyclerView;
     public static RecyclerView.Adapter mAdapter;
@@ -328,9 +338,17 @@ public class MainActivity extends AppCompatActivity
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
+
+                //this adds your places to menu in navigation  drawer
+                addCurrentlyStoredPlacesToArrayList();
+
+                //start geo fence addition process
+                Geofence geofence = createGeofence(latLng, GEOFENCE_RADIUS);
+                GeofencingRequest geofenceRequest = createGeofenceRequest(geofence);
+                addGeofence(geofenceRequest);
+
                 // Transaction was a success.
                 Toast.makeText(MainActivity.this, "Successfully Stored", Toast.LENGTH_SHORT).show();
-                addCurrentlyStoredPlacesToArrayList();
             }
         }, new Realm.Transaction.OnError() {
             @Override
@@ -339,6 +357,53 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(MainActivity.this, error.toString(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+
+    // Create a Geofence
+    private Geofence createGeofence(LatLng latLng, float radius) {
+        return new Geofence.Builder()
+                .setRequestId(GEOFENCE_REQ_ID)
+                .setCircularRegion(latLng.latitude, latLng.longitude, radius)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
+                        | Geofence.GEOFENCE_TRANSITION_EXIT )
+                .build();
+    }
+
+    // Create a Geofence Request
+    private GeofencingRequest createGeofenceRequest(Geofence geofence) {
+        return new GeofencingRequest.Builder()
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .addGeofence(geofence)
+                .build();
+    }
+
+    // Add the created GeofenceRequest to the device's monitoring list
+    private void addGeofence(GeofencingRequest request) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_FINE_LOCATION);
+            }
+        } else {
+            LocationServices.GeofencingApi.addGeofences(
+                    mGoogleApiClient,
+                    request,
+                    createGeofencePendingIntent()
+            );
+        }
+    }
+
+    private PendingIntent geoFencePendingIntent;
+    private final int GEOFENCE_REQ_CODE = 0;
+
+    private PendingIntent createGeofencePendingIntent() {
+        if (geoFencePendingIntent != null)
+            return geoFencePendingIntent;
+
+        Intent intent = new Intent(this, GeofenceTransitionService.class);
+        return PendingIntent.getService(
+                this, GEOFENCE_REQ_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     //this method is triggered as the connection is established(See onStart())
@@ -465,6 +530,12 @@ public class MainActivity extends AppCompatActivity
 //        indexSubmenu++;
 //
 //    }
+
+    public static Intent makeNotificationIntent(Context context, String msg) {
+        Intent intent = new Intent( context, MainActivity.class );
+        intent.putExtra( "Hello this is sarah", msg );
+        return intent;
+    }
 
 }
 
