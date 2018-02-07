@@ -221,6 +221,7 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
                         Toast.makeText(AddReminderActivity.this, "Successfully Stored", Toast.LENGTH_SHORT).show();
                         MainActivity.reminders.add(new Reminder(reminderContentString, time, false, placeEnterText, placeExitText));
                         MainActivity.mAdapter.notifyDataSetChanged();
+                        sendFinalAlarmIntent();
 
                     }
                 }, new Realm.Transaction.OnError() {
@@ -270,12 +271,14 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
         calendar.set(Calendar.HOUR_OF_DAY, alarmTimePicker.getCurrentHour());
         calendar.set(Calendar.MINUTE, alarmTimePicker.getCurrentMinute());
         time = calendar.getTime().toString();
-        Log.i("point MA127", time);
-        Log.i("point MA128", calendar.getTimeInMillis() + "");
-        Log.i("point MA129", System.currentTimeMillis() + "");
+    }
+
+    public void sendFinalAlarmIntent(){
         Intent myIntent = new Intent(AddReminderActivity.this, AlarmReceiver.class);
+        myIntent.putExtra("CONTENT",reminderContentString);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(AddReminderActivity.this, (int) System.currentTimeMillis() % 50000, myIntent, PendingIntent.FLAG_ONE_SHOT);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+        Toast.makeText(this, "SENDINNGGGGG", Toast.LENGTH_SHORT).show();
     }
 //        else {
 //            Log.i("point MA135",pendingIntent.toString());

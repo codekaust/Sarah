@@ -64,6 +64,7 @@ import com.triointeli.sarah.DatabaseModels.YourPlaces;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity
     private static final int NOTIFICATION_ID_1 = 1;
     public static int counterYouPlaces = 0;
     private static Location prevLocn = null, newLocn = null;
+    long prevTime = 0, newTime = 0;
 
     private static final String NOTIFICATION_MSG = "NOTIFICATION MSG";
 
@@ -108,6 +110,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        newTime = Calendar.getInstance().getTimeInMillis();
 
         indexSubmenu = 0;
 
@@ -146,36 +150,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-//        datePickerButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                DatePickerFragment dialog = new DatePickerFragment();
-//                dialog.show(getSupportFragmentManager(), "MainActivity.DateDialog");
-//            }
-//        });
-//
-//        timePickerButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (timePickerShow) {
-//                    timePickerButton.setVisibility(View.GONE);
-//                    timePickerShow = false;
-//                } else {
-//                    timePickerButton.setVisibility(View.VISIBLE);
-//                    timePickerShow = true;
-//                }
-//            }
-//        });
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-//        DateFormat.getTimeInstance(DateFormat.SHORT).format(calander);
+//      DateFormat.getTimeInstance(DateFormat.SHORT).format(calander);
         mAdapter = new ReminderAdapter(reminders);
 
         mRecyclerView.setAdapter(mAdapter);
@@ -425,7 +406,8 @@ public class MainActivity extends AppCompatActivity
 
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        //make it 20 mins
+
+        //make it 30 mins
         mLocationRequest.setInterval(1800000);
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -447,32 +429,38 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
-        if (prevLocn == null) {
-            prevLocn = location;
-            newLocn = location;
-        } else {
-            prevLocn = newLocn;
-            newLocn = location;
+        prevTime = newTime;
+        newTime = Calendar.getInstance().getTimeInMillis();
 
-            float dist;
-            dist = newLocn.distanceTo(prevLocn);
+        if ((newTime - prevTime) / 1800000 >= 1) {
 
-            if (dist < 100) {
+            if (prevLocn == null) {
+                prevLocn = location;
+                newLocn = location;
+            } else {
+                prevLocn = newLocn;
+                newLocn = location;
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra(NOTIFICATION_MSG, "Is it your place... Wanna ADD IT !");
+                float dist;
+                dist = newLocn.distanceTo(prevLocn);
 
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-                stackBuilder.addParentStack(MainActivity.class);
-                stackBuilder.addNextIntent(intent);
-                PendingIntent notificationPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+                if (dist < 100) {
 
-                //Creating and sending Notification
-                NotificationManager notificatioMng =
-                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                notificatioMng.notify(
-                        0,
-                        createNotification("Is it your place... Wanna ADD IT !", notificationPendingIntent));
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra(NOTIFICATION_MSG, "Is it your place... Wanna ADD IT !");
+
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addParentStack(MainActivity.class);
+                    stackBuilder.addNextIntent(intent);
+                    PendingIntent notificationPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    //Creating and sending Notification
+                    NotificationManager notificatioMng =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificatioMng.notify(
+                            0,
+                            createNotification("Is it your place... Wanna ADD IT !", notificationPendingIntent));
+                }
             }
         }
     }
