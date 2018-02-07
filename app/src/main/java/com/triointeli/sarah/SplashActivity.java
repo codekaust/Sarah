@@ -1,10 +1,14 @@
 package com.triointeli.sarah;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import com.triointeli.sarah.WatBot.Boarding;
 
 import org.w3c.dom.Text;
 
@@ -52,6 +56,16 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Starts login activity
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(SplashActivity.this);
+                SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
+
+                if (!sharedPreferences.getBoolean(
+                        "Boarding Complete", false)) {
+                    startActivity(new Intent(SplashActivity.this, Boarding.class));
+                    sharedPreferencesEditor.putBoolean(
+                            "Boarding Complete", true);
+                    sharedPreferencesEditor.apply();
+                }
                 Intent i = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(i);
 

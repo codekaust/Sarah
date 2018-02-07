@@ -8,12 +8,14 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -61,6 +63,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.triointeli.sarah.DatabaseModels.Reminder;
 import com.triointeli.sarah.DatabaseModels.YourPlaces;
+import com.triointeli.sarah.WatBot.Boarding;
 import com.triointeli.sarah.WatBot.MainActivityBot;
 
 import java.text.DateFormat;
@@ -110,7 +113,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setContentView(R.layout.activity_main);
+
+
 
         newTime = Calendar.getInstance().getTimeInMillis();
 
@@ -137,7 +144,7 @@ public class MainActivity extends AppCompatActivity
 
         updateRemiderArrayList();
 
-        reminders.add(new Reminder("abcd", "jan 12 7:54", true, "ritik", "kumar"));
+        //reminders.add(new Reminder("abcd", "jan 12 7:54", true, "ritik", "kumar"));
         Log.i(reminders.size() + "", "point ma124");
         for (int i = 0; i < reminders.size(); i++) {
             Log.i("point ma126", reminders.get(i).getReminderContent());
