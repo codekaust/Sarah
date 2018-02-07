@@ -460,7 +460,7 @@ public class MainActivity extends AppCompatActivity
             if (dist < 100) {
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra(NOTIFICATION_MSG, "You are inside an are for a time. Wanna ADD IT !");
+                intent.putExtra(NOTIFICATION_MSG, "Is it your place... Wanna ADD IT !");
 
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(MainActivity.class);
@@ -472,7 +472,7 @@ public class MainActivity extends AppCompatActivity
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 notificatioMng.notify(
                         0,
-                        createNotification("You are inside an are for a time. Wanna ADD IT !", notificationPendingIntent));
+                        createNotification("Is it your place... Wanna ADD IT !", notificationPendingIntent));
             }
         }
     }
