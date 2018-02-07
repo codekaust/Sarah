@@ -1,137 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="15dp"
-    tools:context="com.triointeli.sarah.AddReminderActivity">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/placeDataLayout"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="visible">
-
-        <EditText
-            android:id="@+id/placeOnEnter_EditText_AddRem_popup1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="placeOnEnter" />
-
-        <EditText
-            android:id="@+id/placeOnLeave_EditText_AddRem_popup1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="placeOnLeave" />
-
-        <Spinner
-            android:id="@+id/s1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/white" />
-
-        <Spinner
-            android:id="@+id/s"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/white" />
-
-        <ImageButton
-            android:id="@+id/next1st_ImageBtn_AddReminder_popup1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:backgroundTint="#00444444"
-            android:padding="10dp"
-            android:src="@drawable/ic_menu_send" />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/dateTimeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:orientation="vertical"
-        android:visibility="invisible">
+        android:padding="15dp"
+        tools:context="com.triointeli.sarah.AddReminderActivity">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:orientation="horizontal">
+            android:id="@+id/placeDataLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
 
-            <Button
-                android:id="@+id/dateButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/date" />
-
-            <TextView
-                android:id="@+id/dateText"
+            <EditText
+                android:id="@+id/placeOnEnter_EditText_AddRem_popup1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/date"
-                android:textSize="18sp" />
+                android:hint="placeOnEnter" />
 
+            <EditText
+                android:id="@+id/placeOnLeave_EditText_AddRem_popup1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="placeOnLeave" />
+
+            <Spinner
+                android:id="@+id/spinnerEntry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/white" />
+
+            <Spinner
+                android:id="@+id/spinnerExit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white" />
+
+            <ImageButton
+                android:id="@+id/next1st_ImageBtn_AddReminder_popup1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:backgroundTint="#00444444"
+                android:padding="10dp"
+                android:src="@drawable/ic_menu_send" />
 
         </LinearLayout>
 
+
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:orientation="horizontal">
+            android:id="@+id/dateTimeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            android:visibility="invisible">
 
-            <Button
-                android:id="@+id/timeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/time" />
-
-            <TextView
-                android:id="@+id/timeText"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:hint="@string/time"
-                android:textSize="18sp" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/dateText"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:text="Date"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textAlignment="textStart"/>
+
+                <TextView
+                    android:id="@+id/timeText"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:hint="Time"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textAlignment="textEnd"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TimePicker
+                    android:id="@+id/alarmTimePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:visibility="gone" />
+
+                <DatePicker
+                    android:id="@+id/alarmDatePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:visibility="visible" />
+            </LinearLayout>
+
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="3dp"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<Button-->
+                <!--android:id="@+id/dateButton"-->
+                <!--android:layout_alignParentStart="true"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@color/colorPrimary"-->
+                <!--android:text="@string/date" />-->
+
+            <!--<Button-->
+                <!--android:id="@+id/timeButton"-->
+                <!--android:layout_alignParentEnd="true"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@color/colorPrimaryDark"-->
+                <!--android:text="@string/time" />-->
 
 
-        </LinearLayout>
+        <!--</RelativeLayout>-->
 
         <ImageButton
             android:id="@+id/next1st_ImageBtn_AddReminder_popup2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
+            android:backgroundTint="@color/white"
             android:padding="10dp"
             android:src="@drawable/ic_menu_send" />
 
-        <TimePicker
-            android:id="@+id/alarmTimePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:visibility="gone" />
-
-        <DatePicker
-            android:id="@+id/alarmDatePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:visibility="visible" />
-
-
     </LinearLayout>
+
+
     <LinearLayout
         android:id="@+id/remainderLayout"
         android:layout_width="match_parent"
@@ -156,4 +172,4 @@
             android:src="@drawable/ic_menu_send" />
 
     </LinearLayout>
-</RelativeLayout>
+</RelativeLayout></ScrollView>

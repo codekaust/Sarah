@@ -93,14 +93,10 @@ public class MainActivity extends AppCompatActivity
     private int indexSubmenu;
     NotificationManagerCompat notificationManager;
 
-    AlertDialog dialogAddPlace, dialogAddPlace2, dialogAddPlace1;
-
-    private boolean datePickerShow = false;
-    private boolean timePickerShow = false;
     Realm realm;
     public static ArrayList<Reminder> reminders;
     private static final int NOTIFICATION_ID_1 = 1;
-
+    public static int counterYouPlaces =0;
     private static Location prevLocn = null, newLocn = null;
 
     @Override
@@ -125,7 +121,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Menu menu = navigationView.getMenu();
-        menu.add("Title1");
         menu_ourPlcaes = menu.getItem(3).getSubMenu();
         subMenuCount = menu_ourPlcaes.size();
 
@@ -133,7 +128,7 @@ public class MainActivity extends AppCompatActivity
 
         updateRemiderArrayList();
 
-        reminders.add(new Reminder("abcd", 213456l, true, "ritik", "kumar"));
+        reminders.add(new Reminder("abcd","jan 12th 2001 7:54", true, "ritik", "kumar"));
         Log.i(reminders.size() + "", "point ma124");
         for (int i = 0; i < reminders.size(); i++) {
             Log.i("point ma126", reminders.get(i).getReminderContent());
@@ -207,17 +202,17 @@ public class MainActivity extends AppCompatActivity
 //        return null;
 //    }
 
-    private DatePickerDialog.OnDateSetListener myDateListener = new
-            DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker arg0,
-                                      int arg1, int arg2, int arg3) {
-                    // arg1 = year
-                    // arg2 = month
-                    // arg3 = day
-//                    showDate(arg1, arg2+1, arg3);
-                }
-            };
+//    private DatePickerDialog.OnDateSetListener myDateListener = new
+//            DatePickerDialog.OnDateSetListener() {
+//                @Override
+//                public void onDateSet(DatePicker arg0,
+//                                      int arg1, int arg2, int arg3) {
+//                    // arg1 = year
+//                    // arg2 = month
+//                    // arg3 = day
+////                    showDate(arg1, arg2+1, arg3);
+//                }
+//            };
 
     private void addCurrentlyStoredPlacesToArrayList() {
 
@@ -232,6 +227,7 @@ public class MainActivity extends AppCompatActivity
         for (YourPlaces place : places) {
             yourPlacesArrayList.add(place);
             displaySubmenu(place);
+            counterYouPlaces++;
         }
 
         realm.commitTransaction();
@@ -257,28 +253,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -291,10 +265,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_talk_sarah) {
             //Intent intentSarah=new Intent(this,class);
             //startActivity(intentSarah);
-        } else if (id == R.id.nav_login) {
-            //Intent intentLogin=new Intent(this,class);
-            //startActivity(intentLogin);
-        } else if (id == R.id.addPlace) {
+        }  else if (id == R.id.addPlace) {
             mAddPlaceView = getLayoutInflater().inflate(R.layout.popup_add_your_place, null);
             tmpToStoreAddLocnName = (EditText) mAddPlaceView.findViewById(R.id.placeName_addPlacePopupEditText);
 
@@ -397,11 +368,12 @@ public class MainActivity extends AppCompatActivity
                 addCurrentlyStoredPlacesToArrayList();
 
                 //start geo fence addition process
-                Geofence geofence = createGeofence(latLng, GEOFENCE_RADIUS,name);
+                Geofence geofence = createGeofence(latLng, GEOFENCE_RADIUS, name);
                 GeofencingRequest geofenceRequest = createGeofenceRequest(geofence);
                 addGeofence(geofenceRequest);
-                Toast.makeText(MainActivity.this, "bkhg"+geofence.getRequestId().toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "bkhg" + geofence.getRequestId().toString(), Toast.LENGTH_SHORT).show();
 
+                counterYouPlaces++;
                 // Transaction was a success.
                 Toast.makeText(MainActivity.this, "Successfully Stored", Toast.LENGTH_SHORT).show();
             }
@@ -416,13 +388,13 @@ public class MainActivity extends AppCompatActivity
 
 
     // Create a Geofence
-    private Geofence createGeofence(LatLng latLng, float radius ,String idName) {
+    private Geofence createGeofence(LatLng latLng, float radius, String idName) {
         return new Geofence.Builder()
                 .setRequestId(idName)
                 .setCircularRegion(latLng.latitude, latLng.longitude, radius)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER
-                        | Geofence.GEOFENCE_TRANSITION_EXIT )
+                        | Geofence.GEOFENCE_TRANSITION_EXIT)
                 .setLoiteringDelay(5).build();
     }
 
@@ -560,8 +532,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static Intent makeNotificationIntent(Context context, String msg) {
-        Intent intent = new Intent( context, MainActivity.class );
-        intent.putExtra( "Hello this is sarah", msg );
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra("Hello this is sarah", msg);
         return intent;
     }
 

@@ -64,7 +64,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHo
         Reminder reminder = reminders.get(position);
 
         holder.remainder.setText(reminder.getReminderContent());
-        holder.dateTime.setText(Long.toString(reminder.getDateTime()));
+        holder.dateTime.setText(reminder.getDateTime());
 //        holder.mCheckbox.setChecked(reminder.isDone());
         holder.placeIn.setText(reminder.getPlaceOnEnter());
         holder.placeout.setText(reminder.getPlaceOnLeave());
