@@ -57,6 +57,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="10dp"
+                        android:textColor="@color/black"
                         android:text="@string/place_in"
                         android:textSize="17sp"
                         android:textStyle="bold" />
@@ -81,7 +82,9 @@
                         android:padding="10dp"
                         android:text="@string/place_out"
                         android:textSize="17sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        />
 
                     <TextView
                         android:id="@+id/placeOut"

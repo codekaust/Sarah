@@ -31,7 +31,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 //        Intent myIntent = new Intent(AlarmReceiver.this, MainActivity.class);
         Log.i("point AR61", "entered receiver");
         v = (Vibrator) context.getSystemService(context.VIBRATOR_SERVICE);
-        v.vibrate(40000);
+        v.vibrate(4000);
         Toast.makeText(context, "bang bang", Toast.LENGTH_SHORT).show();
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), 0);

@@ -121,7 +121,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Menu menu = navigationView.getMenu();
-        menu.add("Title1");
         menu_ourPlcaes = menu.getItem(3).getSubMenu();
         subMenuCount = menu_ourPlcaes.size();
 
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity
 
         updateRemiderArrayList();
 
-        reminders.add(new Reminder("abcd", 213456l, true, "ritik", "kumar"));
+        reminders.add(new Reminder("abcd","jan 12th 2001 7:54", true, "ritik", "kumar"));
         Log.i(reminders.size() + "", "point ma124");
         for (int i = 0; i < reminders.size(); i++) {
             Log.i("point ma126", reminders.get(i).getReminderContent());
@@ -254,28 +253,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -288,10 +265,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_talk_sarah) {
             //Intent intentSarah=new Intent(this,class);
             //startActivity(intentSarah);
-        } else if (id == R.id.nav_login) {
-            //Intent intentLogin=new Intent(this,class);
-            //startActivity(intentLogin);
-        } else if (id == R.id.addPlace) {
+        }  else if (id == R.id.addPlace) {
             mAddPlaceView = getLayoutInflater().inflate(R.layout.popup_add_your_place, null);
             tmpToStoreAddLocnName = (EditText) mAddPlaceView.findViewById(R.id.placeName_addPlacePopupEditText);
 

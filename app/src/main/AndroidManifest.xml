@@ -45,6 +45,7 @@
             android:value="AIzaSyAfmFKeKvFFuiH-xbbt9LCwg-OSjDoqd1E" />
 
         <activity android:name=".AddReminderActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity">
         </activity>
     </application>
