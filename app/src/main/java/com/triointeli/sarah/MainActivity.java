@@ -118,7 +118,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
 
-
         newTime = Calendar.getInstance().getTimeInMillis();
 
         indexSubmenu = 0;
@@ -229,11 +228,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_profile) {
-            //Intent intentProfile=new Intent(this,class);
-            //startActivity(intentProfile);
-        } else if (id == R.id.nav_talk_sarah) {
-            Intent intentSarah=new Intent(MainActivity.this, MainActivityBot.class);
+
+        if (id == R.id.nav_talk_sarah) {
+            Intent intentSarah = new Intent(MainActivity.this, MainActivityBot.class);
             startActivity(intentSarah);
         } else if (id == R.id.addPlace) {
 
