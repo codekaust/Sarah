@@ -2,7 +2,10 @@ package com.triointeli.sarah;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -62,6 +65,7 @@ import com.triointeli.sarah.WatBot.MainActivityBot;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -97,13 +101,18 @@ public class MainActivity extends AppCompatActivity
     Realm realm;
     public static ArrayList<Reminder> reminders;
     private static final int NOTIFICATION_ID_1 = 1;
-    public static int counterYouPlaces =0;
+    public static int counterYouPlaces = 0;
     private static Location prevLocn = null, newLocn = null;
+    long prevTime = 0, newTime = 0;
+
+    private static final String NOTIFICATION_MSG = "NOTIFICATION MSG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        newTime = Calendar.getInstance().getTimeInMillis();
 
         indexSubmenu = 0;
 
@@ -117,7 +126,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         buildGoogleApiClent();
-        Toast.makeText(MainActivity.this, "hello 123", Toast.LENGTH_SHORT).show();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -129,7 +137,7 @@ public class MainActivity extends AppCompatActivity
 
         updateRemiderArrayList();
 
-        reminders.add(new Reminder("abcd","jan 12th 2001 7:54", true, "ritik", "kumar"));
+        reminders.add(new Reminder("abcd", "jan 12 7:54", true, "ritik", "kumar"));
         Log.i(reminders.size() + "", "point ma124");
         for (int i = 0; i < reminders.size(); i++) {
             Log.i("point ma126", reminders.get(i).getReminderContent());
@@ -138,34 +146,10 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "hello test1", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(MainActivity.this, AddReminderActivity.class));
 
             }
         });
-
-//        datePickerButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                DatePickerFragment dialog = new DatePickerFragment();
-//                dialog.show(getSupportFragmentManager(), "MainActivity.DateDialog");
-//            }
-//        });
-//
-//        timePickerButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (timePickerShow) {
-//                    timePickerButton.setVisibility(View.GONE);
-//                    timePickerShow = false;
-//                } else {
-//                    timePickerButton.setVisibility(View.VISIBLE);
-//                    timePickerShow = true;
-//                }
-//            }
-//        });
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -173,7 +157,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-//        DateFormat.getTimeInstance(DateFormat.SHORT).format(calander);
+//      DateFormat.getTimeInstance(DateFormat.SHORT).format(calander);
         mAdapter = new ReminderAdapter(reminders);
 
         mRecyclerView.setAdapter(mAdapter);
@@ -192,28 +176,6 @@ public class MainActivity extends AppCompatActivity
         builder = new NotificationCompat.Builder(this);
         notificationManager = NotificationManagerCompat.from(getApplicationContext());
     }
-
-//    @Override
-//    protected Dialog onCreateDialog(int id) {
-//        // TODO Auto-generated method stub
-//        if (id == 999) {
-//            return new DatePickerDialog(this,
-//                    myDateListener, year, month, day);
-//        }
-//        return null;
-//    }
-
-//    private DatePickerDialog.OnDateSetListener myDateListener = new
-//            DatePickerDialog.OnDateSetListener() {
-//                @Override
-//                public void onDateSet(DatePicker arg0,
-//                                      int arg1, int arg2, int arg3) {
-//                    // arg1 = year
-//                    // arg2 = month
-//                    // arg3 = day
-////                    showDate(arg1, arg2+1, arg3);
-//                }
-//            };
 
     private void addCurrentlyStoredPlacesToArrayList() {
 
@@ -266,7 +228,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_talk_sarah) {
             Intent intentSarah=new Intent(MainActivity.this, MainActivityBot.class);
             startActivity(intentSarah);
-        }  else if (id == R.id.addPlace) {
+        } else if (id == R.id.addPlace) {
+
             mAddPlaceView = getLayoutInflater().inflate(R.layout.popup_add_your_place, null);
             tmpToStoreAddLocnName = (EditText) mAddPlaceView.findViewById(R.id.placeName_addPlacePopupEditText);
 
@@ -372,7 +335,6 @@ public class MainActivity extends AppCompatActivity
                 Geofence geofence = createGeofence(latLng, GEOFENCE_RADIUS, name);
                 GeofencingRequest geofenceRequest = createGeofenceRequest(geofence);
                 addGeofence(geofenceRequest);
-                Toast.makeText(MainActivity.this, "bkhg" + geofence.getRequestId().toString(), Toast.LENGTH_SHORT).show();
 
                 counterYouPlaces++;
                 // Transaction was a success.
@@ -446,8 +408,9 @@ public class MainActivity extends AppCompatActivity
 
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        //make it 20 mins
-        mLocationRequest.setInterval(10000);
+
+        //make it 30 mins
+        mLocationRequest.setInterval(1800000);
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
@@ -468,20 +431,57 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLocationChanged(Location location) {
 
-        if (prevLocn == null) {
-            prevLocn = location;
-            newLocn = location;
-        } else {
-            prevLocn = newLocn;
-            newLocn = location;
+        prevTime = newTime;
+        newTime = Calendar.getInstance().getTimeInMillis();
 
-            float dist;
-            dist = newLocn.distanceTo(prevLocn);
+        if ((newTime - prevTime) / 1800000 >= 1) {
 
-            if (dist < 500) {
-                Toast.makeText(this, "sucess", Toast.LENGTH_SHORT).show();
+            if (prevLocn == null) {
+                prevLocn = location;
+                newLocn = location;
+            } else {
+                prevLocn = newLocn;
+                newLocn = location;
+
+                float dist;
+                dist = newLocn.distanceTo(prevLocn);
+
+                if (dist < 100) {
+
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra(NOTIFICATION_MSG, "Is it your place... Wanna ADD IT !");
+
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addParentStack(MainActivity.class);
+                    stackBuilder.addNextIntent(intent);
+                    PendingIntent notificationPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                    //Creating and sending Notification
+                    NotificationManager notificatioMng =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificatioMng.notify(
+                            0,
+                            createNotification("Is it your place... Wanna ADD IT !", notificationPendingIntent));
+                }
             }
         }
+    }
+
+    // Create notification
+    private Notification createNotification(String msg, PendingIntent notificationPendingIntent) {
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
+        notificationBuilder
+                .setSmallIcon(R.drawable.logo_sarah)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.drawable.logo_sarah))
+                .setColor(Color.RED)
+                .setContentTitle("SARAH")
+                .setContentText(msg)
+                .setContentIntent(notificationPendingIntent)
+                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                .setVibrate(new long[]{1000})
+                .setAutoCancel(true);
+        return notificationBuilder.build();
     }
 
     @Override
@@ -492,7 +492,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        Toast.makeText(MainActivity.this, "hello 461", Toast.LENGTH_SHORT).show();
         Log.i(reminders.size() + "", "point ma124");
         for (int i = 0; i < reminders.size(); i++) {
             Log.i("point ma464", reminders.get(i).getReminderContent());
@@ -505,7 +504,6 @@ public class MainActivity extends AppCompatActivity
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
-        Toast.makeText(MainActivity.this, "hello 789", Toast.LENGTH_SHORT).show();
 
         super.onStop();
     }
