@@ -32,10 +32,6 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
-        <service
-            android:name=".LocationMonitoringService"
-            android:enabled="true"
-            android:process=":location_monitoring" />
 
         <meta-data
             android:name="com.google.android.gms.version"
