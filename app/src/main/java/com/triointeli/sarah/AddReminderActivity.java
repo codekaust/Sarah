@@ -3,6 +3,7 @@ package com.triointeli.sarah;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,8 +26,10 @@ import android.widget.ToggleButton;
 import com.triointeli.sarah.DatabaseModels.Reminder;
 import com.triointeli.sarah.DatabaseModels.YourPlaces;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -36,7 +39,7 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
     EditText placeEnter, placeExit, reminderContent;
     ImageView saveDateTime, savePlaceEnterExit;
     TextView datetext, timetext;
-    Button datePickerButton, timePickerButton, showDateTimeButton;
+    Button datePickerButton, timePickerButton;
     ImageButton reminderContentSetButton;
     Spinner placeEnterSpinner, placeExitSpinner;
     String placeEnterText, placeExitText, timeTextString, dateTextString, reminderContentString, spinnerEntry, spinnerExit;
@@ -51,14 +54,14 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
     private DatePicker alarmDatePicker;
     public String arrayNameYourPlaces[];
 
-    LinearLayout placeDataLayout,dateTimeLayout,remainderLayout;
+    LinearLayout placeDataLayout, dateTimeLayout, remainderLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_reminder);
 
-        realm=Realm.getDefaultInstance();
+        realm = Realm.getDefaultInstance();
         arrayNameYourPlaces = new String[MainActivity.counterYouPlaces];
         RealmResults<YourPlaces> placesTEMP = realm.where(YourPlaces.class).findAll();
         realm.beginTransaction();
@@ -68,7 +71,7 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
         }
         realm.commitTransaction();
         i = 0;
-        dateTime=123456;
+        dateTime = 123456;
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
@@ -82,8 +85,6 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
         datetext = (TextView) findViewById(R.id.dateText);
         timetext = (TextView) findViewById(R.id.timeText);
 
-        showDateTimeButton = (Button) findViewById(R.id.showDateTimeButton);
-
         datePickerButton = (Button) findViewById(R.id.dateButton);
         timePickerButton = (Button) findViewById(R.id.timeButton);
 
@@ -92,6 +93,8 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
             public void onClick(View v) {
                 alarmTimePicker.setVisibility(View.GONE);
                 alarmDatePicker.setVisibility(View.VISIBLE);
+                datePickerButton.setBackgroundResource(R.color.colorPrimary);
+                timePickerButton.setBackgroundResource(R.color.colorPrimaryDark);
             }
         });
         timePickerButton.setOnClickListener(new View.OnClickListener() {
@@ -99,11 +102,83 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
             public void onClick(View v) {
                 alarmDatePicker.setVisibility(View.GONE);
                 alarmTimePicker.setVisibility(View.VISIBLE);
+                datePickerButton.setBackgroundResource(R.color.colorPrimaryDark);
+                timePickerButton.setBackgroundResource(R.color.colorPrimary);
             }
         });
         alarmTimePicker = (TimePicker) findViewById(R.id.alarmTimePicker);
-        alarmDatePicker = (DatePicker) findViewById(R.id.alarmDatePicker);
 
+//        alarmTimePicker.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String time;
+//                Log.i("point ara115", "alarmTimePicker entered");
+//                if (Build.VERSION.SDK_INT >= 23) {
+//                    int hour = alarmTimePicker.getHour();
+//                    int minute = alarmTimePicker.getMinute();
+//                    if (minute < 10) {
+//                        time = hour + " : 0" + minute;
+//                    } else {
+//                        time = hour + " : " + minute;
+//                    }
+//                } else {
+//                    int hour = alarmTimePicker.getCurrentHour();
+//                    int minute = alarmTimePicker.getCurrentMinute();
+//
+//                    if (minute < 10) {
+//                        time = hour + " : 0" + minute;
+//                    } else {
+//                        time = hour + " : " + minute;
+//                    }
+//                }
+//                timetext.setText(time);
+//            }
+//        });
+        alarmTimePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                String time;
+                Log.i("point ara115", hourOfDay+"@"+minute);
+
+                timetext.setText(hourOfDay+" : "+minute);
+            }
+        });
+
+        alarmDatePicker = (DatePicker) findViewById(R.id.alarmDatePicker);
+        alarmDatePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("point ara141", "alarmTimePicker entered");
+
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR, alarmDatePicker.getYear());
+                cal.set(Calendar.MONTH, alarmDatePicker.getMonth());
+                cal.set(Calendar.DAY_OF_MONTH, alarmDatePicker.getDayOfMonth());
+                datetext.setText(cal.getTime().toString());
+            }
+        });
+
+//        alarmDatePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+//            @Override
+//            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//
+//            }
+//        });
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.setTimeInMillis(System.currentTimeMillis());
+        alarmDatePicker.init(calendar1.get(Calendar.YEAR), calendar1.get(Calendar.MONTH), calendar1.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
+
+            @Override
+            public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                Log.i("Date", "Year=" + year + " Month=" + (month + 1) + " day=" + dayOfMonth);
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR, year);
+                cal.set(Calendar.MONTH, month+1);
+                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                datetext.setText(cal.getTime().toString());
+
+            }
+        });
         placeEnterSpinner = (Spinner) findViewById(R.id.spinnerEntry);
         placeExitSpinner = (Spinner) findViewById(R.id.spinnerExit);
 
@@ -151,6 +226,8 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
                 datePickerButton.setVisibility(View.GONE);
                 timePickerButton.setVisibility(View.GONE);
                 onSaveDateTimeClicked();
+                datePickerButton.setBackgroundResource(R.color.colorPrimary);
+                timePickerButton.setBackgroundResource(R.color.colorPrimaryDark);
             }
         });
         reminderContentSetButton.setOnClickListener(new View.OnClickListener() {
@@ -161,7 +238,7 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
                 realm.executeTransactionAsync(new Realm.Transaction() {
                     @Override
                     public void execute(Realm bgRealm) {
-                        Reminder reminder=bgRealm.createObject(Reminder.class);
+                        Reminder reminder = bgRealm.createObject(Reminder.class);
                         reminder.setDateTime(dateTime);
                         reminder.setDone(false);
                         reminder.setPlaceOnEnter(placeEnterText);
@@ -174,7 +251,7 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
                     public void onSuccess() {
                         // Transaction was a success.
                         Toast.makeText(AddReminderActivity.this, "Successfully Stored", Toast.LENGTH_SHORT).show();
-                        MainActivity.reminders.add(new Reminder(reminderContentString,dateTime,false,placeEnterText,placeExitText));
+                        MainActivity.reminders.add(new Reminder(reminderContentString, dateTime, false, placeEnterText, placeExitText));
                         MainActivity.mAdapter.notifyDataSetChanged();
 
                     }
@@ -183,7 +260,7 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
                     public void onError(Throwable error) {
                         // Transaction failed and was automatically canceled.
                         Toast.makeText(AddReminderActivity.this, "Couldn't add.\nPleas try again.", Toast.LENGTH_LONG).show();
-                        startActivity(new Intent(AddReminderActivity.this,MainActivity.class));
+                        startActivity(new Intent(AddReminderActivity.this, MainActivity.class));
                         finish();
                     }
                 });
@@ -196,7 +273,7 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
-        Log.i("point ara198","clicked");
+        Log.i("point ara198", "clicked");
         Spinner spin = (Spinner) parent;
         Spinner spin2 = (Spinner) parent;
         if (spin.getId() == R.id.spinnerEntry) {

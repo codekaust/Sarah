@@ -14,6 +14,7 @@ import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by ritik on 07-02-2018.
@@ -31,7 +32,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Log.i("point AR61", "entered receiver");
         v = (Vibrator) context.getSystemService(context.VIBRATOR_SERVICE);
         v.vibrate(40000);
-
+        Toast.makeText(context, "bang bang", Toast.LENGTH_SHORT).show();
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, MainActivity.class), 0);
 
