@@ -10,7 +10,8 @@
         android:layout_height="300dp"
         android:padding="10dp"
         android:hint="Add reminder content ..."
-        android:id="@+id/addNewReminderContent_popup3"/>
+        android:id="@+id/addNewReminderContent_popup3"
+        android:background="@drawable/edit_shape"/>
 
     <ImageButton
         android:layout_gravity="right"

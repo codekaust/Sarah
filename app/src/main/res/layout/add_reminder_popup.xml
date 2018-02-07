@@ -9,12 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/placeOnEnter_EditText_AddRem_popup1"
-        android:hint="placeOnEnter"/>
-    <EditText
-        android:id="@+id/placeOnLeave_EditText_AddRem_popup1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="placeOnLeave"/>
+        android:hint="placeOnEnter"
+        android:background="@drawable/edit_shape"/>
     <Spinner
         android:id="@+id/s1"
         android:layout_width="match_parent"
@@ -22,6 +18,13 @@
         android:layout_gravity="center_horizontal"
         android:textColor="@color/white"
         />
+    <EditText
+        android:id="@+id/placeOnLeave_EditText_AddRem_popup1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="placeOnLeave"
+        android:background="@drawable/edit_shape"/>
+
     <Spinner
         android:id="@+id/s"
         android:layout_width="match_parent"

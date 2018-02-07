@@ -268,7 +268,6 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
         calendar.set(Calendar.YEAR, alarmDatePicker.getYear());
         calendar.set(Calendar.DAY_OF_MONTH, alarmDatePicker.getDayOfMonth());
         calendar.set(Calendar.HOUR_OF_DAY, alarmTimePicker.getCurrentHour());
-        calendar.set(Calendar.HOUR_OF_DAY, alarmTimePicker.getCurrentHour());
         calendar.set(Calendar.MINUTE, alarmTimePicker.getCurrentMinute());
         time = calendar.getTime().toString();
     }
