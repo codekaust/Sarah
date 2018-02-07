@@ -58,6 +58,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.triointeli.sarah.DatabaseModels.Reminder;
 import com.triointeli.sarah.DatabaseModels.YourPlaces;
+import com.triointeli.sarah.WatBot.MainActivityBot;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -263,8 +264,8 @@ public class MainActivity extends AppCompatActivity
             //Intent intentProfile=new Intent(this,class);
             //startActivity(intentProfile);
         } else if (id == R.id.nav_talk_sarah) {
-            //Intent intentSarah=new Intent(this,class);
-            //startActivity(intentSarah);
+            Intent intentSarah=new Intent(MainActivity.this, MainActivityBot.class);
+            startActivity(intentSarah);
         }  else if (id == R.id.addPlace) {
             mAddPlaceView = getLayoutInflater().inflate(R.layout.popup_add_your_place, null);
             tmpToStoreAddLocnName = (EditText) mAddPlaceView.findViewById(R.id.placeName_addPlacePopupEditText);

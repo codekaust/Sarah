@@ -22,4 +22,10 @@
     <string name="time">time</string>
     <!--<string name="sample_place_out">LHC</string>-->
     <!--<string name="sample_place_out">LHC</string>-->
+    <string name="what_s_on_your_mind">What\'s on your mind?</string>
+    <string name="fragment1">You have <b>logged in</b> with your account!!<p>You now have your own <b>AnnonymousID</b>.</p>  <b>Enjoy annonymous tweeting</b></string>
+    <string name="fragment2"><b>Click</b> on a tweet to <b>comment</b> back!!</string>
+    <string name="fragment3">you can also send <b>Image Tweets</b> through the image button directly!! <p>Comments are also featured with image tweets!! </p>   <b>GOOD LUCK!!</b></string>
+    <string name="fragment4">Swipe features!!!!  Swipe from Right to Left or opposite to make your app bubble!! Click on the bubble and then on expand button to restore your app!!</string>
+
 </resources>

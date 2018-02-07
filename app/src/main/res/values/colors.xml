@@ -6,4 +6,9 @@
     <color name="white">#ffffff</color>
     <color name="grey">#999999</color>
     <color name="black">#000000</color>
+    <color name="bg_bubble_self">#62caa6</color>
+    <color name="bg_bubble_watbot">#ecf0f1</color>
+    <color name="colorPrimaryBoarding">#3F51B5</color>
+    <color name="colorPrimaryDarkBoarding">#303F9F</color>
+    <color name="colorAccentBoarding">#FF4081</color>
 </resources>
