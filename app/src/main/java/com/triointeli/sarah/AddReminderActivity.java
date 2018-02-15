@@ -21,7 +21,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.triointeli.sarah.DatabaseModels.Reminder;
 import com.triointeli.sarah.DatabaseModels.YourPlaces;
@@ -36,10 +35,9 @@ import io.realm.RealmResults;
 
 public class AddReminderActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    EditText placeEnter, placeExit, reminderContent;
+    EditText reminderContent;
     ImageView saveDateTime, savePlaceEnterExit;
     TextView datetext, timetext;
-    //    Button datePickerButton, timePickerButton;
     ImageButton reminderContentSetButton;
     Spinner placeEnterSpinner, placeExitSpinner;
     String placeEnterText, placeExitText, timeTextString, dateTextString, reminderContentString, spinnerEntry, spinnerExit;
@@ -47,12 +45,11 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
     AlarmManager alarmManager;
     String time;
     Realm realm;
-    //    long dateTime;
-    private int i = 0;
 
     private TimePicker alarmTimePicker;
     private DatePicker alarmDatePicker;
-    public String arrayNameYourPlaces[];
+    //    public String arrayNameYourPlaces[];
+    public ArrayList<String> arrayNameYourPlaces;
 
     LinearLayout placeDataLayout, dateTimeLayout, remainderLayout;
 
@@ -62,21 +59,22 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
         setContentView(R.layout.activity_add_reminder);
 
         realm = Realm.getDefaultInstance();
-        arrayNameYourPlaces = new String[MainActivity.counterYouPlaces];
+//        arrayNameYourPlaces = new String[MainActivity.counterYouPlaces];
+        arrayNameYourPlaces = new ArrayList<>();
+        arrayNameYourPlaces.add("Select Place");
         RealmResults<YourPlaces> placesTEMP = realm.where(YourPlaces.class).findAll();
         realm.beginTransaction();
         for (YourPlaces place : placesTEMP) {
-            arrayNameYourPlaces[i] = place.getName();
-            i++;
+//            arrayNameYourPlaces[i] = place.getName();
+            arrayNameYourPlaces.add(place.getName());
         }
         realm.commitTransaction();
-        i = 0;
-//        dateTime = 123456;
+
+        for (int j = 0; j < arrayNameYourPlaces.size(); j++) {
+        }
+
 
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        placeEnter = (EditText) findViewById(R.id.placeOnEnter_EditText_AddRem_popup1);
-        placeExit = (EditText) findViewById(R.id.placeOnLeave_EditText_AddRem_popup1);
 
         placeDataLayout = (LinearLayout) findViewById(R.id.placeDataLayout);
         dateTimeLayout = (LinearLayout) findViewById(R.id.dateTimeLayout);
@@ -159,13 +157,14 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
                 this, android.R.layout.simple_spinner_item, arrayNameYourPlaces);
         spinnerArrayAdapterEntry.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         placeEnterSpinner.setAdapter(spinnerArrayAdapterEntry);
+        placeEnterSpinner.setOnItemSelectedListener(this);
 
         ArrayAdapter<String> spinnerArrayAdapterExit = new ArrayAdapter<String>(
                 this, android.R.layout.simple_spinner_item, arrayNameYourPlaces);
         spinnerArrayAdapterExit.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         placeExitSpinner.setAdapter(spinnerArrayAdapterExit);
-
+        placeExitSpinner.setOnItemSelectedListener(this);
 //        ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.subject_spinner, android.R.layout.simple_spinner_dropdown_item);
 //        s1.setAdapter(adapter);
 //        s1.setOnItemSelectedListener(this);
@@ -178,11 +177,17 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
         savePlaceEnterExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                placeEnterText = placeEnter.getText().toString();
-                placeExitText = placeExit.getText().toString();
-                placeDataLayout.setVisibility(View.INVISIBLE);
-                dateTimeLayout.setVisibility(View.VISIBLE);
+                if (spinnerEntry.equals("Select Place") && spinnerExit.equals("Select Place")) {
+                    Toast.makeText(AddReminderActivity.this, "Please enter place", Toast.LENGTH_SHORT).show();
+                } else {
+                    if(placeEnterText.equals("Select Place")) placeEnterText="";
+                    if(placeExitText.equals("Select Place")) placeExitText="";
+//                    placeEnterText = placeEnter.getText().toString();
+//                    placeExitText = placeExit.getText().toString();
 
+                    placeDataLayout.setVisibility(View.INVISIBLE);
+                    dateTimeLayout.setVisibility(View.VISIBLE);
+                }
             }
 
         });
@@ -242,16 +247,20 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
-        Log.i("point ara198", "clicked");
         Spinner spin = (Spinner) parent;
         Spinner spin2 = (Spinner) parent;
         if (spin.getId() == R.id.spinnerEntry) {
             TextView selectedTextView = (TextView) view;
+//            placeEnter.setText(selectedTextView.getText());
+            placeEnterText = selectedTextView.getText().toString();
             spinnerEntry = selectedTextView.getText().toString();
         }
         if (spin2.getId() == R.id.spinnerExit) {
-            TextView selectedTextView = (TextView) view;
-            spinnerExit = selectedTextView.getText().toString();
+            TextView selectedTextView1 = (TextView) view;
+            spinnerExit = selectedTextView1.getText().toString();
+//            placeExit.setText(selectedTextView1.getText());
+            placeExitText = selectedTextView1.getText().toString();
+
         }
 
     }
@@ -272,19 +281,12 @@ public class AddReminderActivity extends AppCompatActivity implements AdapterVie
         time = calendar.getTime().toString();
     }
 
-    public void sendFinalAlarmIntent(){
+    public void sendFinalAlarmIntent() {
         Intent myIntent = new Intent(AddReminderActivity.this, AlarmReceiver.class);
-        myIntent.putExtra("CONTENT",reminderContentString);
+        myIntent.putExtra("CONTENT", reminderContentString);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(AddReminderActivity.this, (int) System.currentTimeMillis() % 50000, myIntent, PendingIntent.FLAG_ONE_SHOT);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
         Toast.makeText(this, "SENDINNGGGGG", Toast.LENGTH_SHORT).show();
     }
-//        else {
-//            Log.i("point MA135",pendingIntent.toString());
-//            Log.i("point MA134",alarmManager.toString());
-//            alarmManager.cancel(pendingIntent);
-////            setAlarmText("");
-//            Log.i("MyActivity", "Alarm Off");
-//        }
 }
 

@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         Menu menu = navigationView.getMenu();
-        menu_ourPlcaes = menu.getItem(3).getSubMenu();
+        menu_ourPlcaes = menu.getItem(2).getSubMenu();
         subMenuCount = menu_ourPlcaes.size();
 
         reminders = new ArrayList<>();
